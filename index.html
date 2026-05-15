@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="RHIIT – Schweizer IT-Beratung für Privatkunden. Persönliche Unterstützung bei IT-Sicherheit, Datenrettung, Backup-Strategien und Heimnetzwerken." />
-  <meta name="theme-color" content="#0a0612" />
+  <meta name="theme-color" content="#03101e" />
   <meta property="og:title" content="RHIIT – Schweizer IT-Beratung für Privatkunden" />
   <meta property="og:description" content="Navigieren Sie Ihren digitalen Strom – sicher, persönlich, schweizerisch." />
   <meta property="og:type" content="website" />
@@ -29,30 +29,35 @@
     }
 
     :root {
-      /* Dark theme (default) */
-      --bg-deep: #0a0612;
-      --bg-elevated: #140921;
-      --bg-card: rgba(28, 14, 46, 0.55);
-      --bg-card-hover: rgba(40, 20, 64, 0.7);
-      --border: rgba(170, 110, 230, 0.18);
-      --border-strong: rgba(170, 110, 230, 0.4);
+      /* ============================================================
+         Cyber-river palette. Legacy variable names kept (--purple,
+         --magenta, --matrix) but redefined to cyan/blue/aqua values.
+         Per-stage overrides below shift the mood as the user scrolls
+         through Source → Rapids → Delta.
+         ============================================================ */
+      --bg-deep: #03101e;
+      --bg-elevated: #061a33;
+      --bg-card: rgba(8, 28, 56, 0.55);
+      --bg-card-hover: rgba(14, 44, 80, 0.72);
+      --border: rgba(79, 195, 255, 0.18);
+      --border-strong: rgba(79, 195, 255, 0.42);
 
-      --purple: #8a3ffb;
-      --purple-deep: #4a0e80;
-      --magenta: #ff2e9a;
-      --magenta-soft: #d63384;
-      --matrix: #00ff95;
-      --matrix-soft: #14c97a;
+      --purple: #4fc3ff;
+      --purple-deep: #1a5e9c;
+      --magenta: #00e5ff;
+      --magenta-soft: #00b8d4;
+      --matrix: #00ffaa;
+      --matrix-soft: #14d488;
 
-      --text: #ece4f7;
-      --text-muted: #9b8db5;
-      --text-faint: #6a5d82;
+      --text: #e3f4ff;
+      --text-muted: #8db4d4;
+      --text-faint: #4a7095;
 
-      --gradient-flow: linear-gradient(135deg, #8a3ffb 0%, #ff2e9a 100%);
-      --gradient-river: linear-gradient(180deg, rgba(138, 63, 251, 0) 0%, rgba(138, 63, 251, 0.18) 50%, rgba(0, 255, 149, 0.05) 100%);
-      --glow-purple: 0 0 24px rgba(138, 63, 251, 0.4);
-      --glow-magenta: 0 0 24px rgba(255, 46, 154, 0.35);
-      --glow-matrix: 0 0 18px rgba(0, 255, 149, 0.4);
+      --gradient-flow: linear-gradient(135deg, #4fc3ff 0%, #00e5ff 100%);
+      --gradient-river: linear-gradient(180deg, rgba(79, 195, 255, 0) 0%, rgba(0, 229, 255, 0.16) 50%, rgba(0, 255, 170, 0.06) 100%);
+      --glow-purple: 0 0 24px rgba(79, 195, 255, 0.42);
+      --glow-magenta: 0 0 24px rgba(0, 229, 255, 0.4);
+      --glow-matrix: 0 0 18px rgba(0, 255, 170, 0.45);
 
       --font-display: 'Orbitron', 'Exo 2', sans-serif;
       --font-body: 'Inter', 'Exo 2', system-ui, sans-serif;
@@ -62,31 +67,93 @@
       --radius-sm: 8px;
       --maxw: 1180px;
       --pad-section: clamp(4rem, 9vw, 7rem);
+
+      --stage-fade: 0.6s ease;
     }
 
+    /* SOURCE — cold glacial blue, sparse, restrained glow */
+    [data-stage='source'] {
+      --bg-deep: #03101e;
+      --bg-elevated: #061a33;
+      --purple: #5aa8ff;
+      --magenta: #88ddff;
+      --matrix: #b8e8ff;
+      --glow-purple: 0 0 18px rgba(90, 168, 255, 0.32);
+      --glow-magenta: 0 0 18px rgba(136, 221, 255, 0.28);
+      --glow-matrix: 0 0 14px rgba(184, 232, 255, 0.3);
+      --gradient-river: linear-gradient(180deg, rgba(90, 168, 255, 0.05) 0%, rgba(79, 195, 255, 0.10) 60%, rgba(184, 232, 255, 0.04) 100%);
+    }
+
+    /* RAPIDS — turbulent electric current */
+    [data-stage='rapids'] {
+      --bg-deep: #021428;
+      --bg-elevated: #052244;
+      --purple: #4fc3ff;
+      --magenta: #00e5ff;
+      --matrix: #00ffd5;
+      --glow-purple: 0 0 28px rgba(79, 195, 255, 0.55);
+      --glow-magenta: 0 0 32px rgba(0, 229, 255, 0.55);
+      --glow-matrix: 0 0 20px rgba(0, 255, 213, 0.5);
+      --gradient-river: linear-gradient(180deg, rgba(79, 195, 255, 0.15) 0%, rgba(0, 229, 255, 0.22) 50%, rgba(0, 255, 213, 0.12) 100%);
+    }
+
+    /* DELTA — bright bioluminescent harbour */
+    [data-stage='delta'] {
+      --bg-deep: #051f2e;
+      --bg-elevated: #093045;
+      --purple: #00e5ff;
+      --magenta: #00ffd5;
+      --matrix: #00ffaa;
+      --glow-purple: 0 0 24px rgba(0, 229, 255, 0.55);
+      --glow-magenta: 0 0 24px rgba(0, 255, 213, 0.55);
+      --glow-matrix: 0 0 24px rgba(0, 255, 170, 0.6);
+      --gradient-river: linear-gradient(180deg, rgba(0, 229, 255, 0.10) 0%, rgba(0, 255, 213, 0.14) 50%, rgba(0, 255, 170, 0.20) 100%);
+    }
+
+    /* Dawn-river light — warm sunrise on still water */
     [data-theme='light'] {
-      --bg-deep: #f4f1fa;
+      --bg-deep: #fff5e6;
       --bg-elevated: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.78);
-      --bg-card-hover: rgba(255, 255, 255, 0.95);
-      --border: rgba(74, 14, 128, 0.16);
-      --border-strong: rgba(74, 14, 128, 0.32);
+      --bg-card: rgba(255, 255, 255, 0.82);
+      --bg-card-hover: rgba(255, 255, 255, 0.96);
+      --border: rgba(217, 119, 6, 0.20);
+      --border-strong: rgba(217, 119, 6, 0.38);
 
-      --purple: #6a1fc9;
-      --purple-deep: #3a0a66;
-      --magenta: #c41a78;
-      --magenta-soft: #a01561;
-      --matrix: #00a85f;
-      --matrix-soft: #008a4e;
+      --purple: #0277bd;
+      --purple-deep: #01579b;
+      --magenta: #f59e0b;
+      --magenta-soft: #d97706;
+      --matrix: #0d9488;
+      --matrix-soft: #0f766e;
 
-      --text: #1a0f2a;
-      --text-muted: #4a3d5e;
-      --text-faint: #7a6d8e;
+      --text: #0c1f33;
+      --text-muted: #475569;
+      --text-faint: #94a3b8;
 
-      --gradient-river: linear-gradient(180deg, rgba(106, 31, 201, 0) 0%, rgba(106, 31, 201, 0.08) 50%, rgba(0, 168, 95, 0.03) 100%);
-      --glow-purple: 0 0 16px rgba(106, 31, 201, 0.18);
-      --glow-magenta: 0 0 16px rgba(196, 26, 120, 0.18);
-      --glow-matrix: 0 0 14px rgba(0, 168, 95, 0.22);
+      --gradient-flow: linear-gradient(135deg, #0277bd 0%, #f59e0b 100%);
+      --gradient-river: linear-gradient(180deg, rgba(245, 158, 11, 0) 0%, rgba(245, 158, 11, 0.10) 50%, rgba(2, 119, 189, 0.05) 100%);
+      --glow-purple: 0 0 16px rgba(2, 119, 189, 0.22);
+      --glow-magenta: 0 0 16px rgba(245, 158, 11, 0.22);
+      --glow-matrix: 0 0 14px rgba(13, 148, 136, 0.22);
+    }
+
+    [data-theme='light'][data-stage='source'] {
+      --bg-deep: #f9f6ee;
+      --purple: #1e88e5;
+      --magenta: #fbbf24;
+      --matrix: #38bdf8;
+    }
+    [data-theme='light'][data-stage='rapids'] {
+      --bg-deep: #fff5e0;
+      --purple: #0277bd;
+      --magenta: #f59e0b;
+      --matrix: #0d9488;
+    }
+    [data-theme='light'][data-stage='delta'] {
+      --bg-deep: #fff8ef;
+      --purple: #0e9488;
+      --magenta: #f97316;
+      --matrix: #14b8a6;
     }
 
     html {
@@ -207,7 +274,7 @@
       opacity: 0.32 !important;
     }
 
-    .story-scene { will-change: opacity; }
+    .story-scene { will-change: opacity; transition: opacity 0.6s ease; }
     .parallax-layer { will-change: transform; }
 
     /* Continuous river flow — dashed pattern marches downstream */
@@ -253,8 +320,8 @@
     .vault-hex:nth-child(3) polygon { animation-delay: 1.2s; }
     .vault-hex:nth-child(4) polygon { animation-delay: 1.8s; }
     @keyframes vault-glow {
-      0%, 100% { stroke-opacity: 0.55; filter: drop-shadow(0 0 4px rgba(0, 255, 149, 0.25)); }
-      50%      { stroke-opacity: 1;    filter: drop-shadow(0 0 14px rgba(0, 255, 149, 0.7)); }
+      0%, 100% { stroke-opacity: 0.55; filter: drop-shadow(0 0 4px rgba(0, 255, 170, 0.28)); }
+      50%      { stroke-opacity: 1;    filter: drop-shadow(0 0 14px rgba(0, 255, 213, 0.75)); }
     }
 
     /* Cursor trail canvas */
@@ -281,6 +348,51 @@
     }
 
     /* ============================================================
+       RIPPLES — click/hover emit a concentric water ring through
+       the background layer. Driven by JS that sets --rx / --ry to
+       the click point and toggles .rippling on body.
+       ============================================================ */
+
+    .ripple-pulse {
+      position: fixed;
+      left: var(--rx, 50%);
+      top: var(--ry, 50%);
+      width: 8px;
+      height: 8px;
+      margin: -4px 0 0 -4px;
+      border-radius: 50%;
+      border: 1.5px solid var(--magenta);
+      box-shadow: 0 0 12px var(--magenta), inset 0 0 8px rgba(0, 229, 255, 0.4);
+      pointer-events: none;
+      z-index: 95;
+      mix-blend-mode: screen;
+      animation: ripple-expand 1100ms cubic-bezier(0.18, 0.7, 0.32, 1) forwards;
+    }
+
+    [data-theme='light'] .ripple-pulse {
+      mix-blend-mode: multiply;
+      box-shadow: 0 0 10px var(--magenta);
+    }
+
+    @keyframes ripple-expand {
+      0%   { transform: scale(1);   opacity: 0.9; border-width: 1.5px; }
+      60%  { opacity: 0.5; }
+      100% { transform: scale(38);  opacity: 0;   border-width: 0.4px; }
+    }
+
+    /* Layered intensity — hero (source) is bold, body subtle, delta returns */
+    [data-stage='source'] #river-canvas { opacity: 0.82; }
+    [data-stage='rapids'] #river-canvas { opacity: 0.48; }
+    [data-stage='delta']  #river-canvas { opacity: 0.62; }
+    [data-theme='light'][data-stage='source'] #river-canvas { opacity: 0.44; }
+    [data-theme='light'][data-stage='rapids'] #river-canvas { opacity: 0.22; }
+    [data-theme='light'][data-stage='delta']  #river-canvas { opacity: 0.34; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ripple-pulse { animation: none; display: none; }
+    }
+
+    /* ============================================================
        NAVIGATION
        ============================================================ */
 
@@ -291,7 +403,7 @@
       right: 0;
       z-index: 100;
       padding: 1rem 2rem;
-      background: rgba(10, 6, 18, 0.6);
+      background: rgba(3, 16, 30, 0.62);
       backdrop-filter: blur(14px) saturate(140%);
       -webkit-backdrop-filter: blur(14px) saturate(140%);
       border-bottom: 1px solid var(--border);
@@ -299,7 +411,7 @@
     }
 
     [data-theme='light'] .nav {
-      background: rgba(244, 241, 250, 0.75);
+      background: rgba(255, 245, 230, 0.78);
     }
 
     .nav.scrolled {
@@ -635,7 +747,7 @@
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(138, 63, 251, 0.5);
+      box-shadow: 0 8px 30px rgba(79, 195, 255, 0.55);
     }
 
     .btn-ghost {
@@ -757,7 +869,7 @@
       height: 64px;
       margin-bottom: 1.5rem;
       color: var(--purple);
-      filter: drop-shadow(0 0 8px rgba(138, 63, 251, 0.45));
+      filter: drop-shadow(0 0 8px rgba(79, 195, 255, 0.5));
     }
 
     .lore-card .lore-quote {
@@ -813,7 +925,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, transparent 60%, rgba(138, 63, 251, 0.08));
+      background: linear-gradient(135deg, transparent 60%, rgba(0, 229, 255, 0.10));
       opacity: 0;
       transition: opacity 0.4s ease;
     }
@@ -841,13 +953,13 @@
       height: 36px;
       margin-bottom: 1.4rem;
       color: var(--purple);
-      filter: drop-shadow(0 0 6px rgba(138, 63, 251, 0.4));
+      filter: drop-shadow(0 0 6px rgba(79, 195, 255, 0.5));
       transition: color 0.3s ease;
     }
 
     .service-card:hover .service-icon {
       color: var(--matrix);
-      filter: drop-shadow(0 0 8px rgba(0, 255, 149, 0.5));
+      filter: drop-shadow(0 0 8px rgba(0, 255, 213, 0.55));
     }
 
     .service-card h3 {
@@ -1039,7 +1151,7 @@
 
     .faq-item[open] .faq-toggle {
       border-color: var(--matrix);
-      background: rgba(0, 255, 149, 0.08);
+      background: rgba(0, 255, 213, 0.10);
     }
 
     .faq-item[open] .faq-toggle::after {
@@ -1179,7 +1291,7 @@
     .form-row textarea:focus {
       outline: none;
       border-color: var(--matrix);
-      box-shadow: 0 0 0 3px rgba(0, 255, 149, 0.12);
+      box-shadow: 0 0 0 3px rgba(0, 255, 213, 0.16);
     }
 
     .form-note {
@@ -1279,7 +1391,7 @@
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(5, 3, 10, 0.75);
+      background: rgba(2, 12, 24, 0.78);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       z-index: 200;
@@ -1378,7 +1490,7 @@
         top: 100%;
         left: 0;
         right: 0;
-        background: rgba(10, 6, 18, 0.96);
+        background: rgba(3, 16, 30, 0.96);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
         flex-direction: column;
@@ -1388,7 +1500,7 @@
       }
 
       [data-theme='light'] .nav-links {
-        background: rgba(244, 241, 250, 0.97);
+        background: rgba(255, 245, 230, 0.97);
       }
 
       .nav-links.open {
@@ -1467,22 +1579,22 @@
   <svg class="bg-rhein" viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true">
     <defs>
       <linearGradient id="rhein-grad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#8a3ffb" stop-opacity="0.0"/>
-        <stop offset="20%"  stop-color="#8a3ffb" stop-opacity="0.6"/>
-        <stop offset="60%"  stop-color="#ff2e9a" stop-opacity="0.5"/>
-        <stop offset="100%" stop-color="#00ff95" stop-opacity="0.4"/>
+        <stop offset="0%"   stop-color="#5aa8ff" stop-opacity="0.0"/>
+        <stop offset="20%"  stop-color="#5aa8ff" stop-opacity="0.6"/>
+        <stop offset="60%"  stop-color="#4fc3ff" stop-opacity="0.65"/>
+        <stop offset="100%" stop-color="#00ffaa" stop-opacity="0.5"/>
       </linearGradient>
       <linearGradient id="ice-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#aef0ff" stop-opacity="0.4"/>
-        <stop offset="100%" stop-color="#5aa8ff" stop-opacity="0.04"/>
+        <stop offset="0%"   stop-color="#cfeeff" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="#4fc3ff" stop-opacity="0.06"/>
       </linearGradient>
       <linearGradient id="rapid-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#8a3ffb" stop-opacity="0.5"/>
-        <stop offset="100%" stop-color="#ff2e9a" stop-opacity="0.3"/>
+        <stop offset="0%"   stop-color="#4fc3ff" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.35"/>
       </linearGradient>
       <radialGradient id="delta-grad" cx="50%" cy="80%" r="60%">
-        <stop offset="0%"   stop-color="#00ff95" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#00ff95" stop-opacity="0"/>
+        <stop offset="0%"   stop-color="#00ffaa" stop-opacity="0.32"/>
+        <stop offset="100%" stop-color="#00ffaa" stop-opacity="0"/>
       </radialGradient>
       <filter id="glowFilter" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="3" result="blur"/>
@@ -1504,37 +1616,47 @@
       <!-- Animated inner flow dashes -->
       <path d="M 720 -20 C 760 80, 640 160, 700 280 S 800 420, 720 540 S 640 660, 720 780 S 820 880, 760 1020"
             stroke="rgba(255,255,255,0.45)" stroke-width="0.7" fill="none" stroke-dasharray="4 10" class="river-flow"/>
-      <!-- Town/client nodes along the river -->
+      <!-- Town/client circuit-nodes along the cyber-Rhein -->
       <g class="river-nodes">
-        <circle cx="700" cy="280" r="4" fill="#8a3ffb" filter="url(#glowFilter)"/>
-        <circle cx="720" cy="540" r="4" fill="#ff2e9a" filter="url(#glowFilter)"/>
-        <circle cx="720" cy="780" r="4" fill="#00ff95" filter="url(#glowFilter)"/>
+        <!-- Basel — entry node -->
+        <circle cx="700" cy="280" r="5" fill="#5aa8ff" filter="url(#glowFilter)"/>
+        <circle cx="700" cy="280" r="9" fill="none" stroke="#5aa8ff" stroke-width="0.5" opacity="0.6"/>
+        <line x1="688" y1="280" x2="712" y2="280" stroke="#5aa8ff" stroke-width="0.4" opacity="0.5"/>
+        <line x1="700" y1="268" x2="700" y2="292" stroke="#5aa8ff" stroke-width="0.4" opacity="0.5"/>
+        <!-- Zürich-axis confluence — center node -->
+        <circle cx="720" cy="540" r="5" fill="#4fc3ff" filter="url(#glowFilter)"/>
+        <circle cx="720" cy="540" r="10" fill="none" stroke="#4fc3ff" stroke-width="0.5" opacity="0.6"/>
+        <polygon points="720,528 730,540 720,552 710,540" fill="none" stroke="#4fc3ff" stroke-width="0.5" opacity="0.55"/>
+        <!-- Delta — outflow node -->
+        <circle cx="720" cy="780" r="5" fill="#00ffaa" filter="url(#glowFilter)"/>
+        <circle cx="720" cy="780" r="10" fill="none" stroke="#00ffaa" stroke-width="0.5" opacity="0.6"/>
+        <line x1="720" y1="768" x2="720" y2="792" stroke="#00ffaa" stroke-width="0.4" opacity="0.5"/>
       </g>
     </g>
 
     <!-- ============ SCENE 1: QUELLE / GLACIER (top) ============ -->
     <g id="bg-scene-source" class="story-scene">
       <g class="parallax-layer" data-speed="0.06">
-        <!-- Snow-capped alpine peaks framing the source -->
-        <path d="M 80 290 L 240 60 L 400 290 Z" fill="url(#ice-grad)" stroke="rgba(174,240,255,0.4)" stroke-width="1"/>
-        <path d="M 240 60 L 285 100 L 195 100 Z" fill="rgba(255,255,255,0.4)"/>
-        <path d="M 1000 290 L 1180 70 L 1340 290 Z" fill="url(#ice-grad)" stroke="rgba(174,240,255,0.4)" stroke-width="1"/>
-        <path d="M 1180 70 L 1230 105 L 1130 105 Z" fill="rgba(255,255,255,0.4)"/>
+        <!-- Glacial alpine peaks rendered as cyber-faceted shards -->
+        <path d="M 80 290 L 240 60 L 400 290 Z" fill="url(#ice-grad)" stroke="rgba(207,238,255,0.45)" stroke-width="1"/>
+        <path d="M 240 60 L 285 100 L 195 100 Z" fill="rgba(207,238,255,0.45)"/>
+        <path d="M 1000 290 L 1180 70 L 1340 290 Z" fill="url(#ice-grad)" stroke="rgba(207,238,255,0.45)" stroke-width="1"/>
+        <path d="M 1180 70 L 1230 105 L 1130 105 Z" fill="rgba(207,238,255,0.45)"/>
         <!-- Smaller mid peaks -->
-        <path d="M 380 230 L 480 130 L 580 230 Z" fill="url(#ice-grad)" stroke="rgba(174,240,255,0.32)" stroke-width="0.8"/>
-        <path d="M 820 230 L 920 140 L 1020 230 Z" fill="url(#ice-grad)" stroke="rgba(174,240,255,0.32)" stroke-width="0.8"/>
+        <path d="M 380 230 L 480 130 L 580 230 Z" fill="url(#ice-grad)" stroke="rgba(207,238,255,0.35)" stroke-width="0.8"/>
+        <path d="M 820 230 L 920 140 L 1020 230 Z" fill="url(#ice-grad)" stroke="rgba(207,238,255,0.35)" stroke-width="0.8"/>
       </g>
       <g class="parallax-layer" data-speed="0.12">
-        <!-- Source marker — ice cave mouth -->
-        <circle cx="720" cy="50" r="22" fill="rgba(174,240,255,0.1)" stroke="#aef0ff" stroke-width="1" stroke-dasharray="3 3"/>
-        <text x="752" y="55" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(174,240,255,0.8)" letter-spacing="0.18em">QUELLE_47.83°N</text>
-        <!-- Tiny ice particles -->
-        <circle cx="200" cy="200" r="1.2" fill="#aef0ff" opacity="0.7"/>
-        <circle cx="450" cy="180" r="1.5" fill="#aef0ff" opacity="0.5"/>
-        <circle cx="980" cy="170" r="1.2" fill="#aef0ff" opacity="0.6"/>
-        <circle cx="1240" cy="200" r="1" fill="#aef0ff" opacity="0.5"/>
-        <circle cx="320" cy="120" r="0.8" fill="#aef0ff" opacity="0.4"/>
-        <circle cx="1100" cy="150" r="1" fill="#aef0ff" opacity="0.5"/>
+        <!-- Source marker — glacial spring -->
+        <circle cx="720" cy="50" r="22" fill="rgba(207,238,255,0.1)" stroke="#cfeeff" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="752" y="55" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(207,238,255,0.85)" letter-spacing="0.18em">QUELLE_47.83°N</text>
+        <!-- Tiny ice / data motes -->
+        <circle cx="200" cy="200" r="1.2" fill="#cfeeff" opacity="0.7"/>
+        <circle cx="450" cy="180" r="1.5" fill="#cfeeff" opacity="0.55"/>
+        <circle cx="980" cy="170" r="1.2" fill="#cfeeff" opacity="0.6"/>
+        <circle cx="1240" cy="200" r="1" fill="#cfeeff" opacity="0.5"/>
+        <circle cx="320" cy="120" r="0.8" fill="#cfeeff" opacity="0.45"/>
+        <circle cx="1100" cy="150" r="1" fill="#cfeeff" opacity="0.55"/>
       </g>
     </g>
 
@@ -1548,37 +1670,37 @@
         <path d="M 1200 600 Q 980 620 760 600" stroke="url(#rapid-grad)" stroke-width="1.2" fill="none" opacity="0.45"/>
       </g>
       <g class="parallax-layer" data-speed="0.14">
-        <!-- Firewall pillar (left) -->
+        <!-- Firewall pillar (left) — electric blue -->
         <g class="cyber-pillar">
-          <rect x="280" y="440" width="80" height="220" rx="4" fill="rgba(138,63,251,0.08)" stroke="#8a3ffb" stroke-width="1.2"/>
-          <line x1="320" y1="440" x2="320" y2="660" stroke="rgba(138,63,251,0.45)" stroke-width="0.5" stroke-dasharray="2 4"/>
-          <text x="285" y="430" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(138,63,251,0.85)" letter-spacing="0.12em">FIREWALL</text>
-          <text x="285" y="678" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(138,63,251,0.6)">PORT 443</text>
-          <rect x="307" y="532" width="26" height="20" fill="none" stroke="#8a3ffb" stroke-width="0.9"/>
-          <path d="M 312 532 V 524 a8 8 0 0 1 16 0 V 532" fill="none" stroke="#8a3ffb" stroke-width="0.9"/>
-          <circle cx="320" cy="542" r="2" fill="#8a3ffb"/>
+          <rect x="280" y="440" width="80" height="220" rx="4" fill="rgba(79,195,255,0.08)" stroke="#4fc3ff" stroke-width="1.2"/>
+          <line x1="320" y1="440" x2="320" y2="660" stroke="rgba(79,195,255,0.5)" stroke-width="0.5" stroke-dasharray="2 4"/>
+          <text x="285" y="430" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(79,195,255,0.9)" letter-spacing="0.12em">FIREWALL</text>
+          <text x="285" y="678" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(79,195,255,0.65)">PORT 443</text>
+          <rect x="307" y="532" width="26" height="20" fill="none" stroke="#4fc3ff" stroke-width="0.9"/>
+          <path d="M 312 532 V 524 a8 8 0 0 1 16 0 V 532" fill="none" stroke="#4fc3ff" stroke-width="0.9"/>
+          <circle cx="320" cy="542" r="2" fill="#4fc3ff"/>
         </g>
-        <!-- Encryption pillar (right) -->
+        <!-- Encryption pillar (right) — bright cyan -->
         <g class="cyber-pillar">
-          <rect x="1080" y="440" width="80" height="220" rx="4" fill="rgba(255,46,154,0.08)" stroke="#ff2e9a" stroke-width="1.2"/>
-          <line x1="1120" y1="440" x2="1120" y2="660" stroke="rgba(255,46,154,0.45)" stroke-width="0.5" stroke-dasharray="2 4"/>
-          <text x="1080" y="430" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(255,46,154,0.85)" letter-spacing="0.12em">AES_256</text>
-          <text x="1078" y="678" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(255,46,154,0.6)">VERSCHLUESSELT</text>
-          <polygon points="1120,520 1140,532 1140,556 1120,568 1100,556 1100,532" fill="none" stroke="#ff2e9a" stroke-width="0.9"/>
-          <text x="1112" y="552" font-family="JetBrains Mono, monospace" font-size="14" fill="#ff2e9a">⌬</text>
+          <rect x="1080" y="440" width="80" height="220" rx="4" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1.2"/>
+          <line x1="1120" y1="440" x2="1120" y2="660" stroke="rgba(0,229,255,0.5)" stroke-width="0.5" stroke-dasharray="2 4"/>
+          <text x="1080" y="430" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(0,229,255,0.9)" letter-spacing="0.12em">AES_256</text>
+          <text x="1078" y="678" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(0,229,255,0.65)">VERSCHLUESSELT</text>
+          <polygon points="1120,520 1140,532 1140,556 1120,568 1100,556 1100,532" fill="none" stroke="#00e5ff" stroke-width="0.9"/>
+          <text x="1112" y="552" font-family="JetBrains Mono, monospace" font-size="14" fill="#00e5ff">⌬</text>
         </g>
         <!-- Floating encryption hexagons (drift via CSS) -->
         <g class="cyber-hex" transform="translate(500 380)">
-          <polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="none" stroke="#8a3ffb" stroke-width="1" opacity="0.65"/>
+          <polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="none" stroke="#4fc3ff" stroke-width="1" opacity="0.7"/>
         </g>
         <g class="cyber-hex" transform="translate(900 360)">
-          <polygon points="0,-15 13,-7.5 13,7.5 0,15 -13,7.5 -13,-7.5" fill="none" stroke="#ff2e9a" stroke-width="1" opacity="0.65"/>
+          <polygon points="0,-15 13,-7.5 13,7.5 0,15 -13,7.5 -13,-7.5" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.7"/>
         </g>
         <g class="cyber-hex" transform="translate(620 700)">
-          <polygon points="0,-10 8.7,-5 8.7,5 0,10 -8.7,5 -8.7,-5" fill="none" stroke="#8a3ffb" stroke-width="1" opacity="0.55"/>
+          <polygon points="0,-10 8.7,-5 8.7,5 0,10 -8.7,5 -8.7,-5" fill="none" stroke="#4fc3ff" stroke-width="1" opacity="0.6"/>
         </g>
         <g class="cyber-hex" transform="translate(820 720)">
-          <polygon points="0,-11 9.5,-5.5 9.5,5.5 0,11 -9.5,5.5 -9.5,-5.5" fill="none" stroke="#ff2e9a" stroke-width="1" opacity="0.55"/>
+          <polygon points="0,-11 9.5,-5.5 9.5,5.5 0,11 -9.5,5.5 -9.5,-5.5" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.6"/>
         </g>
       </g>
     </g>
@@ -1587,31 +1709,31 @@
     <g id="bg-scene-delta" class="story-scene" opacity="0">
       <g class="parallax-layer" data-speed="0.05">
         <!-- River fans into delta channels -->
-        <path d="M 740 800 L 380 1020" stroke="rgba(0,255,149,0.45)" stroke-width="1.2" fill="none"/>
-        <path d="M 740 800 L 540 1020" stroke="rgba(0,255,149,0.55)" stroke-width="1.2" fill="none"/>
-        <path d="M 740 800 L 740 1020" stroke="rgba(0,255,149,0.7)" stroke-width="1.5" fill="none"/>
-        <path d="M 740 800 L 940 1020" stroke="rgba(0,255,149,0.55)" stroke-width="1.2" fill="none"/>
-        <path d="M 740 800 L 1100 1020" stroke="rgba(0,255,149,0.45)" stroke-width="1.2" fill="none"/>
+        <path d="M 740 800 L 380 1020" stroke="rgba(0,255,170,0.48)" stroke-width="1.2" fill="none"/>
+        <path d="M 740 800 L 540 1020" stroke="rgba(0,255,213,0.58)" stroke-width="1.2" fill="none"/>
+        <path d="M 740 800 L 740 1020" stroke="rgba(0,255,170,0.75)" stroke-width="1.5" fill="none"/>
+        <path d="M 740 800 L 940 1020" stroke="rgba(0,255,213,0.58)" stroke-width="1.2" fill="none"/>
+        <path d="M 740 800 L 1100 1020" stroke="rgba(0,255,170,0.48)" stroke-width="1.2" fill="none"/>
         <!-- Calm reflection band -->
         <ellipse cx="700" cy="980" rx="600" ry="14" fill="url(#delta-grad)"/>
       </g>
       <g class="parallax-layer" data-speed="0.1">
         <!-- Vault hexagons (settled, secure) -->
         <g class="vault-hex" transform="translate(380 920)">
-          <polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="rgba(0,255,149,0.08)" stroke="#00ff95" stroke-width="1.2"/>
-          <text x="-4" y="4" font-family="JetBrains Mono, monospace" font-size="13" fill="#00ff95">⌬</text>
+          <polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="rgba(0,255,170,0.10)" stroke="#00ffaa" stroke-width="1.2"/>
+          <text x="-4" y="4" font-family="JetBrains Mono, monospace" font-size="13" fill="#00ffaa">⌬</text>
         </g>
         <g class="vault-hex" transform="translate(540 940)">
-          <polygon points="0,-13 11,-6.5 11,6.5 0,13 -11,6.5 -11,-6.5" fill="rgba(0,255,149,0.08)" stroke="#00ff95" stroke-width="1"/>
+          <polygon points="0,-13 11,-6.5 11,6.5 0,13 -11,6.5 -11,-6.5" fill="rgba(0,255,213,0.10)" stroke="#00ffd5" stroke-width="1"/>
         </g>
         <g class="vault-hex" transform="translate(940 950)">
-          <polygon points="0,-14 12,-7 12,7 0,14 -12,7 -12,-7" fill="rgba(0,255,149,0.08)" stroke="#00ff95" stroke-width="1"/>
+          <polygon points="0,-14 12,-7 12,7 0,14 -12,7 -12,-7" fill="rgba(0,255,213,0.10)" stroke="#00ffd5" stroke-width="1"/>
         </g>
         <g class="vault-hex" transform="translate(1100 920)">
-          <polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="rgba(0,255,149,0.08)" stroke="#00ff95" stroke-width="1.2"/>
-          <text x="-4" y="4" font-family="JetBrains Mono, monospace" font-size="13" fill="#00ff95">✓</text>
+          <polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="rgba(0,255,170,0.10)" stroke="#00ffaa" stroke-width="1.2"/>
+          <text x="-4" y="4" font-family="JetBrains Mono, monospace" font-size="13" fill="#00ffaa">✓</text>
         </g>
-        <text x="630" y="870" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(0,255,149,0.75)" letter-spacing="0.18em">// DELTA — DATEN IM HAFEN</text>
+        <text x="630" y="870" font-family="JetBrains Mono, monospace" font-size="10" fill="rgba(0,255,170,0.8)" letter-spacing="0.18em">// DELTA — DATEN IM HAFEN</text>
       </g>
     </g>
   </svg>
@@ -1910,23 +2032,23 @@
             <svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" aria-label="Portrait Platzhalter">
               <defs>
                 <linearGradient id="port-bg" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#1a0d2e"/>
-                  <stop offset="100%" stop-color="#2c1448"/>
+                  <stop offset="0%" stop-color="#062538"/>
+                  <stop offset="100%" stop-color="#0a3f5e"/>
                 </linearGradient>
                 <pattern id="hex-grid" width="14" height="12" patternUnits="userSpaceOnUse">
-                  <path d="M7 0 L14 4 L14 8 L7 12 L0 8 L0 4 Z" fill="none" stroke="#8a3ffb" stroke-width="0.4" opacity="0.25"/>
+                  <path d="M7 0 L14 4 L14 8 L7 12 L0 8 L0 4 Z" fill="none" stroke="#4fc3ff" stroke-width="0.4" opacity="0.3"/>
                 </pattern>
               </defs>
               <rect width="200" height="250" fill="url(#port-bg)"/>
               <rect width="200" height="250" fill="url(#hex-grid)"/>
               <!-- silhouette -->
-              <g fill="#8a3ffb" opacity="0.85">
+              <g fill="#4fc3ff" opacity="0.88">
                 <circle cx="100" cy="95" r="34"/>
                 <path d="M30 250 C 30 175, 80 145, 100 145 C 120 145, 170 175, 170 250 Z"/>
               </g>
               <!-- glow line -->
-              <line x1="0" y1="160" x2="200" y2="160" stroke="#00ff95" stroke-width="0.8" opacity="0.6"/>
-              <circle cx="100" cy="160" r="3" fill="#00ff95"/>
+              <line x1="0" y1="160" x2="200" y2="160" stroke="#00ffd5" stroke-width="0.8" opacity="0.7"/>
+              <circle cx="100" cy="160" r="3" fill="#00ffd5"/>
             </svg>
             <span class="portrait-label">// Foto folgt</span>
           </div>
@@ -2303,7 +2425,10 @@
       }, { threshold: 0.12 });
       $$('.reveal').forEach(el => io.observe(el));
 
-      /* ----------------- Scroll Story: scene opacity + parallax ----------------- */
+      /* ----------------- Scroll Story: snap-on-section stage transitions -----------------
+         The cyber river locks into one of three discrete palettes based on which
+         third of the document is in view. Scene SVGs snap their opacity (0/1),
+         and CSS transitions (0.6s) handle the actual color crossfade. */
       const rhein = $('.bg-rhein');
       const sceneSource = $('#bg-scene-source');
       const sceneRapids = $('#bg-scene-rapids');
@@ -2311,48 +2436,50 @@
       const parallaxLayers = $$('.bg-rhein .parallax-layer');
       parallaxLayers.forEach(l => l.dataset.baseTransform = l.getAttribute('transform') || '');
 
-      // Accent color shifts with scroll: top → purple, mid → magenta, bottom → matrix
-      let scrollAccent = '#8a3ffb';
+      // Per-stage palette feeds canvas + cursor trail
+      const STAGE_PALETTE = {
+        source: { primary: '#5aa8ff', secondary: '#88ddff', accent: '#cfeeff', density: 0.55, speed: 0.5, glitch: 0   },
+        rapids: { primary: '#4fc3ff', secondary: '#00e5ff', accent: '#00ffd5', density: 1.45, speed: 1.45, glitch: 0.07 },
+        delta:  { primary: '#00e5ff', secondary: '#00ffd5', accent: '#00ffaa', density: 0.95, speed: 0.85, glitch: 0   }
+      };
+
+      // currentStage is the snap state; scrollAccent is the *currently active*
+      // colour the cursor trail samples. Both update on threshold crossings only.
+      let currentStage = null;
+      let scrollAccent = STAGE_PALETTE.source.primary;
+
+      const setStage = (stage) => {
+        if (stage === currentStage) return;
+        currentStage = stage;
+        root.setAttribute('data-stage', stage);
+        scrollAccent = STAGE_PALETTE[stage].primary;
+        // Snap scene opacities — CSS transition on .story-scene handles the crossfade
+        if (sceneSource) sceneSource.setAttribute('opacity', stage === 'source' ? '1' : '0');
+        if (sceneRapids) sceneRapids.setAttribute('opacity', stage === 'rapids' ? '1' : '0');
+        if (sceneDelta)  sceneDelta.setAttribute('opacity',  stage === 'delta'  ? '1' : '0');
+      };
 
       let rafPending = false;
       const updateStory = () => {
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         const p = docHeight > 0 ? Math.min(1, window.scrollY / docHeight) : 0;
 
-        // Slow whole-SVG drift (kept from original for inertia feel)
+        // Slight whole-SVG drift preserves the inertia feel
         rhein.style.transform = `translateY(${-window.scrollY * 0.05}px)`;
 
-        // Scene 1 (Source): visible 0–0.30, fade out 0.30–0.42
-        if (sceneSource) {
-          const op = p < 0.30 ? 1 : Math.max(0, 1 - (p - 0.30) / 0.12);
-          sceneSource.setAttribute('opacity', op.toFixed(2));
-        }
-        // Scene 2 (Rapids): fade in 0.25–0.45, hold 0.45–0.65, fade out 0.65–0.78
-        if (sceneRapids) {
-          let op = 0;
-          if (p > 0.25 && p <= 0.45)      op = (p - 0.25) / 0.20;
-          else if (p > 0.45 && p <= 0.65) op = 1;
-          else if (p > 0.65 && p <= 0.78) op = 1 - (p - 0.65) / 0.13;
-          sceneRapids.setAttribute('opacity', op.toFixed(2));
-        }
-        // Scene 3 (Delta): fade in 0.65+, stays
-        if (sceneDelta) {
-          const op = p > 0.65 ? Math.min(1, (p - 0.65) / 0.15) : 0;
-          sceneDelta.setAttribute('opacity', op.toFixed(2));
-        }
+        // Discrete stage thresholds (snap-on-section)
+        const stage = p < 0.30 ? 'source'
+                    : p < 0.66 ? 'rapids'
+                               : 'delta';
+        setStage(stage);
 
-        // Parallax: each layer drifts by its data-speed
+        // Parallax preserved — each layer drifts by its data-speed
         parallaxLayers.forEach(layer => {
           const speed = parseFloat(layer.getAttribute('data-speed')) || 0.1;
           const offset = p * 220 * speed;
           const base = layer.dataset.baseTransform || '';
           layer.setAttribute('transform', `translate(0 ${(-offset).toFixed(1)}) ${base}`);
         });
-
-        // Scroll-driven accent (drives cursor trail + canvas palette weighting)
-        scrollAccent = p < 0.33 ? '#8a3ffb'
-                     : p < 0.66 ? '#ff2e9a'
-                                : '#00ff95';
 
         rafPending = false;
       };
@@ -2464,9 +2591,50 @@
       modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
+      /* ----------------- Water Ripples on hover/click ----------------- */
+      const RIPPLE_TARGETS = '.btn, .channel, .service-card, .faq-item summary, .nav-links a, .logo, .theme-toggle, .lore-card, .me-credentials li, .footer-block a';
+      const reduceMotionForRipples = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const spawnRipple = (x, y, soft = false) => {
+        const r = document.createElement('div');
+        r.className = 'ripple-pulse';
+        if (soft) r.style.animationDuration = '850ms';
+        r.style.setProperty('--rx', x + 'px');
+        r.style.setProperty('--ry', y + 'px');
+        r.style.opacity = soft ? '0.55' : '1';
+        document.body.appendChild(r);
+        // Clean up after animation finishes
+        setTimeout(() => r.remove(), soft ? 900 : 1200);
+      };
+
+      if (!reduceMotionForRipples) {
+        // Click ripple — large, bright, at the click point
+        document.addEventListener('click', (e) => {
+          if (e.target.closest(RIPPLE_TARGETS)) spawnRipple(e.clientX, e.clientY, false);
+        });
+
+        // Hover ripple — subtle, only on intentional pointer entries.
+        // Throttled per-element so re-entering doesn't spam.
+        let lastHoverEmit = 0;
+        document.addEventListener('mouseover', (e) => {
+          const target = e.target.closest(RIPPLE_TARGETS);
+          if (!target) return;
+          // mouseover bubbles on every descendant — gate by checking relatedTarget
+          if (target.contains(e.relatedTarget)) return;
+          const now = performance.now();
+          if (now - lastHoverEmit < 140) return;
+          lastHoverEmit = now;
+          const rect = target.getBoundingClientRect();
+          spawnRipple(rect.left + rect.width / 2, rect.top + rect.height / 2, true);
+        });
+      }
+
       /* ============================================================
-         CANVAS — DATA RIVER
-         Vertical streams of glowing characters & dots flowing down
+         CANVAS — CYBER RIVER (radial vanishing-point)
+         Particles are born near a horizon point and rush outward to-
+         ward the viewer, gaining size + brightness. Each particle is
+         either a hex digit ("FF7A") or a code fragment ("=>"). The
+         rapids stage adds chromatic-aberration glitch on some particles.
          ============================================================ */
 
       const canvas = $('#river-canvas');
@@ -2474,18 +2642,36 @@
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const PALETTE = {
-        purple: '#8a3ffb',
-        magenta: '#ff2e9a',
-        matrix: '#00ff95',
-        soft:    '#5c2caa'
-      };
+      // Mobile gets a simplified flow (perf budget)
+      const mobileScale = window.innerWidth < 720 ? 0.55 : 1;
 
-      // Sparse glyph alphabet — geometric + Swiss-cyber + flow marks
-      const GLYPH_SET = ['◇','◆','⌬','⏣','☰','⟁','⟆','⟢','│','┃','╎','╏','╱','╲','+','=','·','◈','⎔'];
+      const HEX_GLYPHS  = ['0x4F','0xA1','0x00','FF7A','1010','1F','C9','3B7','BE','7E','24','D3','82','0C','AB','E2','5A','0xFF','01','11','0xCAFE','0xBEEF'];
+      const CODE_GLYPHS = ['{ }','=>','( )','[ ]','&&','||','</>','...','++','--','==','!==','??','();','/*','*/','#!','://','0b','0x','~/','./','--'];
+      const ALL_GLYPHS  = HEX_GLYPHS.concat(CODE_GLYPHS);
+
+      const pickGlyph = () => ALL_GLYPHS[(Math.random() * ALL_GLYPHS.length) | 0];
 
       let W = 0, H = 0, DPR = 1;
-      let columns = [];
+      let VPx = 0, VPy = 0;
+      let particles = [];
+
+      const withAlpha = (hex, a) => {
+        const h = hex.replace('#', '');
+        const r = parseInt(h.slice(0, 2), 16);
+        const g = parseInt(h.slice(2, 4), 16);
+        const b = parseInt(h.slice(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(1, a)).toFixed(3)})`;
+      };
+
+      const palette = () => STAGE_PALETTE[currentStage || 'source'];
+
+      const pickColor = () => {
+        const pal = palette();
+        const r = Math.random();
+        return r < 0.55 ? pal.primary
+             : r < 0.85 ? pal.secondary
+                        : pal.accent;
+      };
 
       const resize = () => {
         DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -2496,106 +2682,127 @@
         canvas.style.width = W + 'px';
         canvas.style.height = H + 'px';
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        initColumns();
+        VPx = W * 0.5;
+        VPy = H * 0.42;
+        initParticles();
       };
 
-      const initColumns = () => {
-        // Column spacing — wider on small screens
-        const spacing = W < 720 ? 36 : 28;
-        const count = Math.floor(W / spacing);
-        columns = [];
-        for (let i = 0; i < count; i++) {
-          columns.push(makeColumn(i, spacing));
+      // Particle pool sized to "rapids" max; per-stage density culls draws,
+      // so we don't churn allocations on stage changes.
+      const MAX_PARTICLES = Math.floor(260 * mobileScale);
+
+      const seedParticle = (p, atHorizon = false) => {
+        // Angle around the vanishing point. Bias toward the bottom semicircle
+        // (the river surface flowing toward us) but allow some sky/peripheral motion.
+        const downBias = Math.random() < 0.78;
+        const baseAngle = downBias
+          ? Math.PI * (0.08 + Math.random() * 0.84)   // bottom hemisphere (down-left → down-right)
+          : -Math.PI * (0.08 + Math.random() * 0.84); // top hemisphere (sparse)
+        p.angle = baseAngle;
+        // Slight tangential drift (river meander)
+        p.drift = (Math.random() - 0.5) * 0.0025;
+        // z=0 at horizon, ~1.1 at foreground (leave a little overshoot for fadeout)
+        p.z = atHorizon ? Math.random() * 0.05 : Math.random() * 1.1;
+        p.zSpeed = 0.0035 + Math.random() * 0.0065;
+        p.glyph = pickGlyph();
+        p.color = pickColor();
+        // Stable size variance per particle (avoids flicker)
+        p.sizeBase = 6 + Math.random() * 6;
+        p.glitchRoll = Math.random();
+      };
+
+      const initParticles = () => {
+        particles = new Array(MAX_PARTICLES);
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+          particles[i] = {};
+          seedParticle(particles[i], false);
         }
       };
 
-      const makeColumn = (i, spacing) => {
-        const x = i * spacing + spacing * 0.5 + (Math.random() - 0.5) * 8;
-        const speed = 0.4 + Math.random() * 1.6; // px per frame baseline
-        const length = 6 + Math.floor(Math.random() * 18);
-        const y = -Math.random() * H;
-        const colorRoll = Math.random();
-        const color =
-          colorRoll < 0.55 ? PALETTE.purple :
-          colorRoll < 0.85 ? PALETTE.magenta :
-                             PALETTE.matrix;
-        const fontSize = 11 + Math.floor(Math.random() * 4);
-        const variance = Math.random() * 0.8 + 0.6;
-        return { x, y, speed, length, color, fontSize, variance, glyphs: [] };
+      // Trail-fade RGB cached per theme to avoid re-reading the attribute every frame
+      let fadeFill = 'rgba(3, 16, 30, 0.14)';
+      const refreshFade = () => {
+        fadeFill = root.getAttribute('data-theme') === 'light'
+          ? 'rgba(255, 245, 230, 0.14)'
+          : 'rgba(3, 16, 30, 0.14)';
       };
+      refreshFade();
+
+      // Re-cache fade when the theme toggles
+      const themeObserver = new MutationObserver(refreshFade);
+      themeObserver.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
       const tick = () => {
         if (document.hidden) {
           requestAnimationFrame(tick);
           return;
         }
-        // Trail fade — slight rectangle erase that creates motion blur
-        ctx.fillStyle = root.getAttribute('data-theme') === 'light'
-          ? 'rgba(244, 241, 250, 0.12)'
-          : 'rgba(10, 6, 18, 0.14)';
+        const pal = palette();
+        const speedMul = pal.speed;
+        const densityMul = pal.density;
+        const glitchProb = pal.glitch;
+        const drawCount = Math.floor(MAX_PARTICLES * densityMul * 0.7);
+
+        // Soft trail-fade
+        ctx.fillStyle = fadeFill;
         ctx.fillRect(0, 0, W, H);
 
-        for (const c of columns) {
-          c.y += c.speed * c.variance;
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
 
-          // Lead glyph (brightest)
-          ctx.font = `${c.fontSize}px "JetBrains Mono", monospace`;
-          ctx.textBaseline = 'top';
+        for (let i = 0; i < drawCount; i++) {
+          const p = particles[i];
+          p.z += p.zSpeed * speedMul;
+          p.angle += p.drift;
 
-          for (let n = 0; n < c.length; n++) {
-            const yy = c.y - n * (c.fontSize + 2);
-            if (yy < -20 || yy > H + 20) continue;
-            const isHead = n === 0;
-            const fade = 1 - (n / c.length);
-            const alpha = fade * (isHead ? 1 : 0.55);
-
-            // pick glyph occasionally (caches stable look)
-            if (!c.glyphs[n] || Math.random() < 0.015) {
-              c.glyphs[n] = GLYPH_SET[Math.floor(Math.random() * GLYPH_SET.length)];
-            }
-
-            if (isHead) {
-              ctx.shadowColor = c.color;
-              ctx.shadowBlur = 12;
-              ctx.fillStyle = c.color;
-            } else {
-              ctx.shadowBlur = 0;
-              ctx.fillStyle = withAlpha(c.color, alpha * 0.85);
-            }
-            ctx.fillText(c.glyphs[n], c.x, yy);
+          if (p.z > 1.15) {
+            seedParticle(p, true);
+            continue;
           }
-          ctx.shadowBlur = 0;
 
-          // Recycle column once head leaves screen
-          if (c.y - c.length * (c.fontSize + 2) > H) {
-            c.y = -Math.random() * 120;
-            c.speed = 0.4 + Math.random() * 1.6;
-            c.length = 6 + Math.floor(Math.random() * 18);
-            c.glyphs = [];
-            // Bias new columns toward the current scroll-driven accent (story palette shift)
-            const r = Math.random();
-            c.color = r < 0.62 ? scrollAccent
-                    : r < 0.81 ? PALETTE.purple
-                    : r < 0.93 ? PALETTE.magenta
-                               : PALETTE.matrix;
+          // Perspective: position offset and visual scale both grow with z^1.6.
+          // The exponent gives the "rushing past" acceleration near the viewer.
+          const depth = Math.pow(p.z, 1.6);
+          const spreadX = W * 0.62;
+          const spreadY = H * 0.72;
+          const x = VPx + Math.cos(p.angle) * depth * spreadX;
+          const y = VPy + Math.sin(p.angle) * depth * spreadY;
+
+          if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+
+          const size = p.sizeBase + depth * 22;
+          const alpha = Math.min(1, p.z * 1.8) * 0.92;
+
+          ctx.font = `${size.toFixed(1)}px "JetBrains Mono", monospace`;
+
+          // Rapids-only chromatic-aberration glitch on ~glitchProb of particles
+          if (glitchProb > 0 && p.glitchRoll < glitchProb) {
+            const offset = 1.5 + Math.random() * 2.5;
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = withAlpha('#ff3380', alpha * 0.55);
+            ctx.fillText(p.glyph, x - offset, y);
+            ctx.fillStyle = withAlpha('#00ffd5', alpha * 0.55);
+            ctx.fillText(p.glyph, x + offset, y);
           }
+
+          // Lead glyph glow (only for near-viewer particles to save fill rate)
+          if (p.z > 0.55) {
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 10 + depth * 8;
+          } else {
+            ctx.shadowBlur = 0;
+          }
+          ctx.fillStyle = withAlpha(p.color, alpha);
+          ctx.fillText(p.glyph, x, y);
         }
+        ctx.shadowBlur = 0;
 
         requestAnimationFrame(tick);
-      };
-
-      const withAlpha = (hex, a) => {
-        const h = hex.replace('#', '');
-        const r = parseInt(h.slice(0, 2), 16);
-        const g = parseInt(h.slice(2, 4), 16);
-        const b = parseInt(h.slice(4, 6), 16);
-        return `rgba(${r}, ${g}, ${b}, ${a.toFixed(3)})`;
       };
 
       if (!reduceMotion) {
         resize();
         window.addEventListener('resize', () => {
-          // debounce
           clearTimeout(window.__rhiitResize);
           window.__rhiitResize = setTimeout(resize, 120);
         });
