@@ -111,138 +111,42 @@
     ::selection { background: var(--green); color: var(--bg); }
 
     /* ============================================================
-       BOOT overlay (~1.2s)
-       ============================================================ */
-    #boot {
-      position: fixed; inset: 0; z-index: 9999;
-      background: #04050a;
-      display: flex; align-items: center; justify-content: center;
-      transition: opacity .5s var(--ease-cinematic);
-    }
-    #boot.gone { opacity: 0; pointer-events: none; }
-    .boot-body {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      color: #39ff7a;
-      max-width: 540px;
-      width: calc(100% - 32px);
-      line-height: 1.7;
-    }
-    .boot-body .ok { color: #39ff7a; }
-    .boot-body .key { color: #2bd5ff; }
-    .boot-body .warn { color: #ff2bd6; }
-    .boot-body .dim { color: #5a6275; }
-    .boot-bar {
-      margin-top: 14px;
-      height: 4px;
-      background: rgba(57,255,122,0.1);
-      position: relative;
-      overflow: hidden;
-    }
-    .boot-bar::after {
-      content: "";
-      position: absolute; inset: 0;
-      width: 0;
-      background: #39ff7a;
-      box-shadow: 0 0 12px #39ff7a;
-      animation: bootFill 1.1s var(--ease-cinematic) forwards;
-    }
-    @keyframes bootFill { to { width: 100%; } }
-    .boot-scan {
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: linear-gradient(to bottom, transparent 0%, transparent 49%, rgba(57,255,122,0.5) 50%, transparent 51%, transparent 100%);
-      animation: bootScan 1.2s linear forwards;
-    }
-    @keyframes bootScan {
-      0%   { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
-
-    /* ============================================================
-       BACKGROUND LAYERS
+       BACKGROUND — Three.js canvas (step 1 scaffolding)
        ============================================================ */
     #bgCanvas {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       z-index: 0;
       pointer-events: none;
       display: block;
     }
-    #trailCanvas {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%;
-      z-index: 1;
+
+    /* Debug HUD overlay — step-1 only. Shows camera state + current section. */
+    .bg-debug {
+      position: fixed;
+      top: 70px;
+      left: clamp(12px, 2vw, 22px);
+      z-index: 60;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--green);
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-strong);
+      padding: 8px 12px;
+      letter-spacing: 0.06em;
       pointer-events: none;
-      mix-blend-mode: screen;
+      min-width: 200px;
+      clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
     }
-    [data-theme="light"] #bgCanvas { display: none; }
-    [data-theme="light"] #trailCanvas { display: none; }
-
-    /* light-mode blueprint background */
-    #blueprint {
-      position: fixed; inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      display: none;
-      background:
-        radial-gradient(ellipse at 20% 10%, rgba(11, 95, 126, 0.06), transparent 60%),
-        radial-gradient(ellipse at 80% 90%, rgba(10, 107, 58, 0.06), transparent 60%);
-    }
-    #blueprint::before {
-      content: "";
-      position: absolute; inset: 0;
-      background:
-        linear-gradient(rgba(15,18,24,0.06) 1px, transparent 1px) 0 0 / 48px 48px,
-        linear-gradient(90deg, rgba(15,18,24,0.06) 1px, transparent 1px) 0 0 / 48px 48px;
-      mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-    }
-    #blueprint::after {
-      content: "";
-      position: absolute; inset: 0;
-      background:
-        linear-gradient(rgba(15,18,24,0.03) 1px, transparent 1px) 0 0 / 12px 12px,
-        linear-gradient(90deg, rgba(15,18,24,0.03) 1px, transparent 1px) 0 0 / 12px 12px;
-    }
-    [data-theme="light"] #blueprint { display: block; }
-
-    /* faint grid + vignette + scanlines, dark only */
-    .bg-grid {
-      position: fixed; inset: 0; z-index: 1; pointer-events: none;
-      background:
-        linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 64px 64px,
-        linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 64px 64px;
-      mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
-    }
-    .bg-vignette {
-      position: fixed; inset: 0; z-index: 2; pointer-events: none;
-      background:
-        radial-gradient(ellipse at 50% 50%, transparent 0%, var(--bg) 95%),
-        linear-gradient(to bottom, var(--bg) 0%, transparent 8%, transparent 92%, var(--bg) 100%);
-    }
-    .bg-scanlines {
-      position: fixed; inset: 0; z-index: 3; pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(0,0,0,0) 0px,
-        rgba(0,0,0,0) 2px,
-        rgba(255,255,255,0.018) 2px,
-        rgba(255,255,255,0.018) 3px
-      );
-      opacity: .9;
-    }
-    [data-theme="light"] .bg-grid, [data-theme="light"] .bg-scanlines, [data-theme="light"] .bg-vignette { display: none; }
-
-    /* page edge red tint (hero chaos) */
-    .edge-tint {
-      position: fixed; inset: 0; z-index: 2; pointer-events: none;
-      background:
-        radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(255, 74, 91, 0.18) 100%);
-      opacity: 0;
-      mix-blend-mode: screen;
-      transition: opacity .4s var(--ease-cinematic);
-    }
-    [data-theme="light"] .edge-tint { mix-blend-mode: multiply; }
+    .bg-debug .row { display: flex; justify-content: space-between; gap: 14px; }
+    .bg-debug .k   { color: var(--fg-dim); }
+    .bg-debug .v   { color: var(--green); }
+    @media (max-width: 720px) { .bg-debug { display: none; } }
 
     /* ---------- content above ---------- */
     main, footer, .topbar, .hud { position: relative; z-index: 5; }
@@ -505,6 +409,21 @@
     @media (max-width: 900px) {
       .hero-grid { grid-template-columns: 1fr; gap: 36px; }
       .hero-aside { order: 2; }
+    }
+
+    /* the storm in scene 1 is dense — local scrim keeps the headline + copy legible */
+    .hero-main { position: relative; isolation: isolate; }
+    .hero-main::before {
+      content: "";
+      position: absolute;
+      inset: -50px -70px -50px -70px;
+      background: radial-gradient(ellipse at 30% 50%, rgba(6,7,12, 0.68) 0%, rgba(6,7,12, 0.22) 45%, transparent 75%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(8px);
+    }
+    [data-theme="light"] .hero-main::before {
+      background: radial-gradient(ellipse at 30% 50%, rgba(241,242,235, 0.80) 0%, rgba(241,242,235, 0.28) 45%, transparent 75%);
     }
 
     .hero-init {
@@ -1182,7 +1101,7 @@
     .konami-term .konami-prompt { color: #fff; }
 
     /* ============================================================
-       Reduced motion
+       Reduced motion — degrade gracefully, keep scene rendered
        ============================================================ */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -1190,7 +1109,6 @@
         animation-iteration-count: 1 !important;
         transition-duration: .001ms !important;
       }
-      #bgCanvas, #trailCanvas, .bg-scanlines { display: none; }
       .glitch-in { opacity: 1; }
       .fade-up { opacity: 1; transform: none; }
     }
@@ -1199,377 +1117,31 @@
       animation-iteration-count: 1 !important;
       transition-duration: .001ms !important;
     }
-    body.no-motion #bgCanvas, body.no-motion #trailCanvas, body.no-motion .bg-scanlines { display: none; }
     body.no-motion .glitch-in { opacity: 1; }
     body.no-motion .fade-up { opacity: 1; transform: none; }
-
-    /* mobile tone-down */
-    @media (max-width: 720px) {
-      .bg-grid { background-size: 48px 48px; opacity: .6; }
-    }
-
-    /* scroll-snap removed — free scroll */
-
-    /* ============================================================
-       DATA STREAM CANVAS (text overlay above three.js bg)
-       ============================================================ */
-    #streamCanvas {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%;
-      z-index: 1;
-      pointer-events: none;
-      display: block;
-      mix-blend-mode: screen;
-      opacity: .22;
-    }
-    [data-theme="light"] #streamCanvas { display: none; }
-    body.no-motion #streamCanvas { display: none; }
-
-    /* ============================================================
-       SCENE 1 — Hero chaos overlay
-       ============================================================ */
-    .chaos-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-    [data-theme="light"] .chaos-overlay { display: none; }
-    body.no-motion .chaos-overlay { display: none; }
-
-    /* phishing email card (cycles in/out controlled via .show class) */
-    .phish-card {
-      position: absolute;
-      left: 4%;
-      bottom: 8%;
-      width: clamp(260px, 26vw, 340px);
-      background: var(--bg-card-solid);
-      border: 1px solid var(--magenta);
-      font-family: var(--font-body);
-      font-size: 13px;
-      box-shadow: 0 12px 38px rgba(0,0,0,0.6), 0 0 32px rgba(255, 43, 214, 0.25);
-      transform: translateY(20px);
-      opacity: 0;
-      transition: opacity .55s var(--ease-cinematic), transform .55s var(--ease-cinematic);
-      clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
-    }
-    .phish-card.show { opacity: 1; transform: translateY(0); }
-    .phish-tag {
-      position: absolute;
-      top: -10px;
-      right: 8px;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      color: var(--magenta);
-      background: var(--bg-card-solid);
-      padding: 2px 8px;
-      border: 1px solid var(--magenta);
-    }
-    .phish-head {
-      padding: 10px 14px;
-      display: flex; gap: 10px; align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-    .phish-avatar {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--magenta);
-      color: #fff;
-      display: grid; place-items: center;
-      font-family: var(--font-mono);
-      font-weight: 700; font-size: 13px;
-    }
-    .phish-from { font-weight: 600; color: var(--fg); }
-    .phish-from small { display: block; color: var(--fg-dim); font-weight: 400; font-family: var(--font-mono); font-size: 11px; }
-    .phish-subject {
-      padding: 10px 14px;
-      font-weight: 700;
-      color: var(--magenta);
-      font-family: var(--font-mono);
-      font-size: 13px;
-    }
-    .phish-body { padding: 0 14px 14px; color: var(--fg-muted); line-height: 1.55; }
-    .phish-body a { color: var(--blue); text-decoration: underline; }
-
-    @media (max-width: 900px) {
-      .phish-card { left: 4%; bottom: 4%; width: 78vw; }
-    }
-
-    /* cascading error popups */
-    .popup {
-      position: absolute;
-      width: clamp(200px, 22vw, 280px);
-      background: var(--bg-card-solid);
-      border: 1px solid var(--magenta);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--fg);
-      box-shadow: 0 0 20px rgba(255, 43, 214, 0.35);
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity .4s var(--ease-cinematic), transform .4s var(--ease-cinematic);
-      clip-path: polygon(0 6px, 6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
-    }
-    .popup.show { opacity: 1; transform: translateY(0); }
-    .popup-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 6px 10px;
-      background: rgba(255, 43, 214, 0.12);
-      border-bottom: 1px solid var(--magenta);
-      color: var(--magenta);
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.08em;
-    }
-    .popup-body { padding: 10px 12px; line-height: 1.5; color: var(--fg); }
-    .popup-body strong { color: var(--magenta); }
-    .popup-demo {
-      display: inline-block;
-      margin-left: 6px;
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      color: var(--magenta);
-      border: 1px solid var(--magenta);
-      padding: 1px 6px;
-    }
-
-    /* ============================================================
-       SCENE 2 — investigation visuals (radar, network nodes)
-       ============================================================ */
-    /* Fixed-position SVG containers that fade in only during middle scroll */
-    .scene2-layer {
-      position: fixed;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity .8s var(--ease-cinematic);
-    }
-    [data-theme="light"] .scene2-layer { display: none; }
-    body.no-motion .scene2-layer { display: none; }
-    .scene2-layer.active { opacity: 1; }
-
-    /* radar sweep — large, overlapping the right edge */
-    #radar {
-      top: -8vh;
-      right: -12vw;
-      width: clamp(420px, 58vw, 760px);
-      height: clamp(420px, 58vw, 760px);
-    }
-    #radar svg { width: 100%; height: 100%; }
-    #radar .ring {
-      fill: none;
-      stroke: rgba(43, 213, 255, 0.35);
-      stroke-width: 1;
-    }
-    #radar .crosshair {
-      stroke: rgba(43, 213, 255, 0.25);
-      stroke-width: 1;
-      stroke-dasharray: 2 4;
-    }
-    #radar .sweep {
-      fill: url(#radarGrad);
-      transform-origin: 50% 50%;
-      animation: radarSweep 4s linear infinite;
-    }
-    @keyframes radarSweep {
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    #radar .blip {
-      fill: var(--blue);
-      filter: drop-shadow(0 0 4px var(--blue-glow));
-      opacity: 0;
-      animation: blip 4s linear infinite;
-    }
-    #radar .blip.b1 { animation-delay: .6s; }
-    #radar .blip.b2 { animation-delay: 1.4s; }
-    #radar .blip.b3 { animation-delay: 2.6s; }
-    #radar .blip.b4 { animation-delay: 3.2s; }
-    @keyframes blip {
-      0%   { opacity: 1; }
-      40%  { opacity: 0.5; }
-      100% { opacity: 0; }
-    }
-    #radar .label {
-      fill: rgba(43, 213, 255, 0.8);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: .12em;
-    }
-
-    /* network nodes — large, drifted left, deep in the background */
-    #netNodes {
-      top: 6vh;
-      left: -16vw;
-      width: clamp(520px, 70vw, 920px);
-      height: clamp(520px, 70vw, 920px);
-      --scene2-opacity: 0.30;
-    }
-    #netNodes svg { width: 100%; height: 100%; }
-    #netNodes .label {
-      fill: rgba(43, 213, 255, 0.55);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-    #netNodes .label.rl { fill: rgba(43, 213, 255, 0.8); font-size: 10px; }
-    #netNodes .edge {
-      stroke: rgba(43, 213, 255, 0.40);
-      stroke-width: 1;
-      fill: none;
-      stroke-dasharray: 360;
-      stroke-dashoffset: 360;
-      transition: stroke-dashoffset 1.4s var(--ease-cinematic), stroke .4s;
-    }
-    #netNodes .edge.drawn { stroke-dashoffset: 0; }
-    #netNodes .node circle {
-      fill: rgba(13, 17, 28, 0.7);
-      stroke: rgba(43, 213, 255, 0.30);
-      stroke-width: 1.2;
-      transition: stroke .4s, fill .4s;
-    }
-    #netNodes .node.lit circle {
-      stroke: var(--blue);
-      fill: rgba(43, 213, 255, 0.14);
-      filter: drop-shadow(0 0 6px var(--blue-glow));
-    }
-    @media (max-width: 1100px) {
-      #netNodes { top: -6vh; left: -30vw; width: 110vw; height: 110vw; --scene2-opacity: 0.22; }
-    }
-    @media (max-width: 720px) {
-      #netNodes { display: none; }
-    }
-
-    /* per-element opacity overrides on .active */
-    .scene2-layer.active { opacity: var(--scene2-opacity, 1); }
-    @media (max-width: 900px) {
-      #radar { width: 100vw; height: 100vw; top: -20vw; right: -30vw; }
-    }
-
-    /* ============================================================
-       SCENE 3 — Kontakt safety motifs
-       ============================================================ */
-    .kontakt { overflow: hidden; }
-
-    /* peaceful horizon line behind kontakt content */
-    .horizon {
-      position: absolute;
-      left: 0; right: 0;
-      top: 50%;
-      height: 1px;
-      background: linear-gradient(to right,
-        transparent 0%,
-        rgba(57, 255, 122, 0.0) 10%,
-        rgba(57, 255, 122, 0.55) 30%,
-        rgba(57, 255, 122, 0.7) 50%,
-        rgba(57, 255, 122, 0.55) 70%,
-        rgba(57, 255, 122, 0.0) 90%,
-        transparent 100%);
-      box-shadow: 0 0 22px var(--green-glow), 0 0 60px var(--green-glow);
-      opacity: 0;
-      transform: scaleX(0);
-      transform-origin: center center;
-      transition: opacity 1.2s var(--ease-cinematic), transform 1.2s var(--ease-cinematic);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .horizon.active { opacity: .9; transform: scaleX(1); }
-    [data-theme="light"] .horizon {
-      background: linear-gradient(to right, transparent, rgba(10, 107, 58, 0.35), rgba(10, 107, 58, 0.55), rgba(10, 107, 58, 0.35), transparent);
-      box-shadow: 0 0 18px rgba(10, 107, 58, 0.25);
-    }
-
-    /* concentric protective rings around padlock */
-    .padlock-wrap {
-      position: relative;
-      width: 200px;
-      display: inline-block;
-    }
-    .padlock-rings {
-      position: absolute;
-      inset: -40px;
-      pointer-events: none;
-    }
-    .padlock-rings circle {
-      fill: none;
-      stroke: var(--green);
-      stroke-width: 1;
-      opacity: 0;
-    }
-    .padlock-rings.active circle.r1 { animation: ringPulse 3.4s ease-out 0.0s infinite; }
-    .padlock-rings.active circle.r2 { animation: ringPulse 3.4s ease-out 1.1s infinite; }
-    .padlock-rings.active circle.r3 { animation: ringPulse 3.4s ease-out 2.2s infinite; }
-    @keyframes ringPulse {
-      0%   { r: 30; opacity: 0.7; stroke-width: 1.4; }
-      80%  { r: 110; opacity: 0; stroke-width: 0.4; }
-      100% { r: 110; opacity: 0; stroke-width: 0; }
-    }
-    [data-theme="light"] .padlock-rings circle { stroke: var(--green); }
-
-    /* wireframe hex shield around contact form */
-    .shield-svg {
-      position: absolute;
-      inset: -16px;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .shield-svg polygon {
-      fill: rgba(57, 255, 122, 0.02);
-      stroke: var(--green);
-      stroke-width: 1.2;
-      stroke-dasharray: 800;
-      stroke-dashoffset: 800;
-      filter: drop-shadow(0 0 8px var(--green-glow));
-      transition: stroke-dashoffset 1.6s var(--ease-cinematic);
-    }
-    .shield-svg.active polygon { stroke-dashoffset: 0; }
-    .shield-svg .inner {
-      stroke: rgba(57, 255, 122, 0.35);
-      stroke-width: 0.8;
-      stroke-dasharray: 600;
-      stroke-dashoffset: 600;
-      transition: stroke-dashoffset 2s var(--ease-cinematic) .3s;
-    }
-    .shield-svg.active .inner { stroke-dashoffset: 0; }
-    [data-theme="light"] .shield-svg polygon { fill: rgba(10, 107, 58, 0.02); }
-
-    .contact-form-wrap {
-      position: relative;
-      margin-top: 36px;
-    }
-    .contact-form-wrap .contact-form { margin-top: 0; position: relative; z-index: 1; }
-
   </style>
 </head>
 <body>
   <!-- ============================================================
-       BOOT OVERLAY
-       ============================================================ -->
-  <div id="boot" aria-hidden="true">
-    <div class="boot-scan"></div>
-    <div class="boot-body">
-      <div><span class="key">&gt;</span> rhiit.init <span class="dim">--client=visitor</span></div>
-      <div><span class="ok">[ok]</span> secure_channel established</div>
-      <div><span class="ok">[ok]</span> identity verified</div>
-      <div><span class="ok">[ok]</span> rendering scene…</div>
-      <div class="boot-bar"></div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       BACKGROUND LAYERS
+       BACKGROUND — single Three.js canvas (step 1 scaffolding)
        ============================================================ -->
   <canvas id="bgCanvas" aria-hidden="true"></canvas>
-  <canvas id="streamCanvas" aria-hidden="true"></canvas>
-  <canvas id="trailCanvas" aria-hidden="true"></canvas>
-  <div id="blueprint" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
-  <div class="bg-vignette" aria-hidden="true"></div>
-  <div class="bg-scanlines" aria-hidden="true"></div>
-  <div class="edge-tint" id="edgeTint" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       BG DEBUG HUD — step-1 only, shows camera z + section
+       ============================================================ -->
+  <div class="bg-debug" id="bgDebug" aria-hidden="true">
+    <div class="row"><span class="k">// section</span><span class="v" id="bgDbgSection">—</span></div>
+    <div class="row"><span class="k">progress</span><span class="v" id="bgDbgProgress">0.00</span></div>
+    <div class="row"><span class="k">camera.z</span><span class="v" id="bgDbgZ">0.0</span></div>
+    <div class="row"><span class="k">camera.y</span><span class="v" id="bgDbgY">0.0</span></div>
+    <div class="row"><span class="k">tilt</span><span class="v" id="bgDbgTilt">0.00</span></div>
+    <div class="row"><span class="k">storm</span><span class="v" id="bgDbgStorm">1.00</span></div>
+    <div class="row"><span class="k">order</span><span class="v" id="bgDbgOrder">0.00</span></div>
+    <div class="row"><span class="k">workshop</span><span class="v" id="bgDbgWorkshop">0.00</span></div>
+    <div class="row"><span class="k">calm</span><span class="v" id="bgDbgCalm">0.00</span></div>
+    <div class="row"><span class="k">horizon</span><span class="v" id="bgDbgHorizon">0.00</span></div>
+  </div>
 
   <!-- ============================================================
        TOPBAR
@@ -1596,73 +1168,6 @@
   <!-- ============================================================
        HUD
        ============================================================ -->
-  <!-- Scene 2 fixed-position investigation visuals -->
-  <div class="scene2-layer" id="radar" aria-hidden="true">
-    <svg viewBox="0 0 200 200">
-      <defs>
-        <linearGradient id="radarGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="rgba(43, 213, 255, 0)"/>
-          <stop offset="100%" stop-color="rgba(43, 213, 255, 0.45)"/>
-        </linearGradient>
-      </defs>
-      <circle class="ring" cx="100" cy="100" r="92"/>
-      <circle class="ring" cx="100" cy="100" r="62"/>
-      <circle class="ring" cx="100" cy="100" r="32"/>
-      <line class="crosshair" x1="100" y1="6" x2="100" y2="194"/>
-      <line class="crosshair" x1="6" y1="100" x2="194" y2="100"/>
-      <path class="sweep" d="M100 100 L 192 100 A 92 92 0 0 0 100 8 Z"/>
-      <circle class="blip b1" cx="140" cy="60" r="2.6"/>
-      <circle class="blip b2" cx="62" cy="130" r="2.6"/>
-      <circle class="blip b3" cx="120" cy="148" r="2.6"/>
-      <circle class="blip b4" cx="48" cy="78" r="2.6"/>
-      <text class="label" x="10" y="18">// scope</text>
-      <text class="label" x="120" y="194">scan: active</text>
-    </svg>
-  </div>
-
-  <div class="scene2-layer" id="netNodes" aria-hidden="true">
-    <svg viewBox="0 0 480 480">
-      <!-- edges from central router to 10 devices -->
-      <path class="edge" d="M240 240 L 240 60"/>
-      <path class="edge" d="M240 240 L 358 78"/>
-      <path class="edge" d="M240 240 L 430 178"/>
-      <path class="edge" d="M240 240 L 430 302"/>
-      <path class="edge" d="M240 240 L 358 402"/>
-      <path class="edge" d="M240 240 L 240 440"/>
-      <path class="edge" d="M240 240 L 122 402"/>
-      <path class="edge" d="M240 240 L 50 302"/>
-      <path class="edge" d="M240 240 L 50 178"/>
-      <path class="edge" d="M240 240 L 122 78"/>
-      <!-- central router -->
-      <g class="node" data-n="0"><circle cx="240" cy="240" r="14"/></g>
-      <!-- 10 devices around the router -->
-      <g class="node" data-n="1"><circle cx="240" cy="60"  r="9"/></g>
-      <g class="node" data-n="2"><circle cx="358" cy="78"  r="9"/></g>
-      <g class="node" data-n="3"><circle cx="430" cy="178" r="9"/></g>
-      <g class="node" data-n="4"><circle cx="430" cy="302" r="9"/></g>
-      <g class="node" data-n="5"><circle cx="358" cy="402" r="9"/></g>
-      <g class="node" data-n="6"><circle cx="240" cy="440" r="9"/></g>
-      <g class="node" data-n="7"><circle cx="122" cy="402" r="9"/></g>
-      <g class="node" data-n="8"><circle cx="50"  cy="302" r="9"/></g>
-      <g class="node" data-n="9"><circle cx="50"  cy="178" r="9"/></g>
-      <g class="node" data-n="10"><circle cx="122" cy="78" r="9"/></g>
-      <!-- labels -->
-      <text class="label rl" x="240" y="232" text-anchor="middle">ROUTER</text>
-      <text class="label" x="240" y="44"   text-anchor="middle">LAPTOP</text>
-      <text class="label" x="358" y="62"   text-anchor="middle">PHONE</text>
-      <text class="label" x="430" y="162"  text-anchor="middle">TABLET</text>
-      <text class="label" x="430" y="320"  text-anchor="middle">SMART-TV</text>
-      <text class="label" x="358" y="420"  text-anchor="middle">NAS</text>
-      <text class="label" x="240" y="458"  text-anchor="middle">DRUCKER</text>
-      <text class="label" x="122" y="420"  text-anchor="middle">SPEAKER</text>
-      <text class="label" x="50"  y="320"  text-anchor="middle">KONSOLE</text>
-      <text class="label" x="50"  y="162"  text-anchor="middle">DOORBELL</text>
-      <text class="label" x="122" y="62"   text-anchor="middle">CAM</text>
-      <text class="label" x="14" y="20"    fill="rgba(43,213,255,0.55)">// home.local</text>
-      <text class="label" x="14" y="34"    fill="rgba(43,213,255,0.35)" font-size="7">// 11 devices monitored</text>
-    </svg>
-  </div>
-
   <aside class="hud" aria-hidden="true">
     <div class="row"><span class="k">// system</span><span class="v" id="hudSection">rhiit.init</span></div>
     <div class="bar"></div>
@@ -1714,33 +1219,6 @@
 
         </div>
       </div>
-      <!-- Scene 1 chaos: phishing card, attacker silhouette, popups -->
-      <div class="chaos-overlay" aria-hidden="true">
-
-        <!-- phishing email card (cycles in/out like an error popup) -->
-        <div class="phish-card" id="phishCard">
-          <span class="phish-tag">// PHISHING-DEMO</span>
-          <div class="phish-head">
-            <div class="phish-avatar">P</div>
-            <div class="phish-from">
-              Post Schweiz Zustelldienst
-              <small>noreply@post-ch.delivery</small>
-            </div>
-          </div>
-          <div class="phish-subject">Dein Paket wartet auf eine Zollgebühr</div>
-          <div class="phish-body">
-            Geehrter Kunde, dein Paket konnte nicht zugestellt werden. Bitte
-            <a href="#">hier klicken</a>, um die Zollgebühr von
-            <strong>CHF 2.39</strong> zu bezahlen.
-          </div>
-        </div>
-
-        <!-- popups cycle through these slots; positions/contents managed in JS -->
-        <div class="popup" id="popup-0" data-pos="tl"></div>
-        <div class="popup" id="popup-1" data-pos="tr"></div>
-        <div class="popup" id="popup-2" data-pos="bl"></div>
-      </div>
-
       <div class="scroll-cue" aria-hidden="true">↓ weiter unten</div>
     </section>
 
@@ -1891,7 +1369,7 @@
           <div class="ueber-bio fade-up d2">
             <!-- DRAFT: origin story — edit to your voice -->
             <p>
-              <strong>Mit 14 wurde mein Computer gehackt.</strong>
+              <strong>Mit 8 wurde mein Computer gehackt.</strong>
               Ich erinnere mich noch genau an das Gefühl: ohnmächtig,
               ausgesetzt, irgendwer Fremdes ist plötzlich in meinem
               Zimmer. Das war der Moment, in dem aus Faszination
@@ -2114,6 +1592,7 @@
          ============================================================ -->
     <section class="kontakt" id="kontakt" aria-labelledby="kontakt-h">
       <div class="horizon" id="horizon" aria-hidden="true"></div>
+      <svg class="connection-web" id="connectionWeb" aria-hidden="true" preserveAspectRatio="none"></svg>
       <div class="container">
         <div class="sec-head">
           <div class="sec-prompt fade-up">connect --secure<span class="blink"></span></div>
@@ -2167,14 +1646,10 @@
         </div>
 
         <button class="notfall fade-up d3" id="notfallBtn" aria-haspopup="dialog">
-          🚨 Sofort-Hilfe
+          Sofort-Hilfe
         </button>
 
         <div class="contact-form-wrap">
-        <svg class="shield-svg" id="shieldSvg" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-          <polygon points="20,40 80,8 920,8 980,40 980,560 920,592 80,592 20,560"/>
-          <polygon class="inner" points="40,55 90,25 910,25 960,55 960,545 910,575 90,575 40,545"/>
-        </svg>
         <form class="contact-form panel fade-up d4" id="contactForm" action="mailto:info@rhiit.ch" method="post" enctype="text/plain">
           <h3>Oder schreib mir kurz</h3>
           <div class="form-row">
@@ -2228,7 +1703,7 @@
   <footer class="foot">
     <div class="container foot-grid">
       <div class="wm">RHIIT</div>
-      <div class="foot-line">+41 79 533 01 51 · <a href="mailto:info@rhiit.ch">info@rhiit.ch</a> · Werdenberg, CH</div>
+      <div class="foot-line">+41 79 533 01 51 · <a href="mailto:info@rhiit.ch">info@rhiit.ch</a> · IT made simple.</div>
       <div class="foot-line"><a href="#" id="impressumLink">Impressum</a> · © <span id="year">2026</span> RHIIT</div>
     </div>
   </footer>
@@ -2291,10 +1766,6 @@ You took the green pill. The system is yours now.
       location.reload();
     });
 
-    /* ---------- boot overlay ---------- */
-    const boot = $('#boot');
-    setTimeout(() => { boot.classList.add('gone'); }, motionReduced ? 200 : 1300);
-    setTimeout(() => { boot.style.display = 'none'; }, motionReduced ? 700 : 1900);
 
     /* ---------- typewriter helpers ---------- */
     function typewriter(el, text, opts = {}) {
@@ -2431,381 +1902,1563 @@ You took the green pill. The system is yours now.
     }, { threshold: 0.3 });
     $$('section').forEach(s => sectionTrigger.observe(s));
 
-    /* ---------- cursor trail (separate canvas) ---------- */
-    const trail = $('#trailCanvas');
-    const tctx = trail.getContext('2d');
-    let trailPoints = [];
-    let trailAnim = 0;
-    function trailResize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      trail.width = window.innerWidth * dpr;
-      trail.height = window.innerHeight * dpr;
-      tctx.setTransform(1, 0, 0, 1, 0, 0);
-      tctx.scale(dpr, dpr);
-    }
-    function trailDraw() {
-      const w = window.innerWidth, h = window.innerHeight;
-      tctx.fillStyle = 'rgba(0,0,0,0.18)';
-      tctx.globalCompositeOperation = 'destination-out';
-      tctx.fillRect(0, 0, w, h);
-      tctx.globalCompositeOperation = 'source-over';
-      for (let i = 0; i < trailPoints.length; i++) {
-        const p = trailPoints[i];
-        p.life -= 0.02;
-        if (p.life <= 0) { trailPoints.splice(i--, 1); continue; }
-        const a = Math.max(0, p.life);
-        const r = 12 * a + 2;
-        const grad = tctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-        grad.addColorStop(0, `rgba(57, 255, 122, ${a * 0.6})`);
-        grad.addColorStop(1, 'rgba(57, 255, 122, 0)');
-        tctx.fillStyle = grad;
-        tctx.beginPath();
-        tctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        tctx.fill();
-      }
-      trailAnim = requestAnimationFrame(trailDraw);
-    }
-    if (!motionReduced && !isMobile) {
-      trailResize();
-      trailDraw();
-      window.addEventListener('mousemove', (e) => {
-        trailPoints.push({ x: e.clientX, y: e.clientY, life: 1 });
-        if (trailPoints.length > 40) trailPoints.shift();
-      });
-      window.addEventListener('resize', trailResize);
-    }
-
     /* ============================================================
-       THREE.JS scene — data rain + wireframe geometry, scroll-driven
+       BACKGROUND — Three.js scene (step 2: hero storm + threats)
+       - Single fixed canvas behind content.
+       - Perspective camera moves through six sections on scroll.
+       - Pull-back + tilt-up reveal at the #ueber transition.
+       - Hero scene-1: shader-driven data-storm (~5000 points) plus
+         three iconic threat InstancedMeshes — phishing hooks, ghost
+         fake-login windows, and BSOD/error shards — drifting toward
+         the camera and recycling at the far plane.
+       - Storm + threats fade out as the camera leaves hero.
+       - prefers-reduced-motion freezes the camera (scene still renders).
        ============================================================ */
-    let scene, camera, renderer, particles, wireframes = [], scanRing;
-    const uniforms = {
-      u_time:       { value: 0 },
-      u_chaos:      { value: 1.0 },       // 0..1
-      u_brightness: { value: 0.45 },      // 0..1
-      u_redMix:     { value: 0.55 },      // 0..1, red tint
-      u_colorBase:  { value: null },      // THREE.Color (green)
-      u_colorRed:   { value: null },      // THREE.Color (red)
-      u_cursor:     { value: null },      // THREE.Vector2 (world-ish)
-      u_density:    { value: 1.0 },       // 0..1, particle visibility
+    const bgCanvasEl = $('#bgCanvas');
+    const SECTION_IDS = ['hero','leistungen','ueber','preise','faq','kontakt'];
+
+    // Camera keyframes — fractions of total scroll progress.
+    const CAMERA_KEYS = [
+      { p: 0.00, z:  30, y:  0,  rotX:  0.00 },  // hero start
+      { p: 0.18, z: -10, y:  0,  rotX:  0.00 },  // mid-hero
+      { p: 0.34, z: -40, y:  0,  rotX:  0.00 },  // end leistungen — forward dolly peaks
+      { p: 0.50, z: -10, y: 14,  rotX: -0.22 },  // ueber transition — pull-back + tilt-up
+      { p: 0.66, z: -25, y: 14,  rotX: -0.22 },  // preise — held
+      { p: 0.83, z: -40, y: 14,  rotX: -0.22 },  // faq — gentle drift
+      { p: 1.00, z: -55, y: 16,  rotX: -0.24 }   // kontakt — final
+    ];
+    // Storm intensity — peaks scene 1, REMAINS high through leistungen as the
+    // ordered lanes, gone by the time the camera tilts up at ueber.
+    const STORM_KEYS = [
+      { p: 0.00, v: 1.00 },
+      { p: 0.18, v: 1.00 },  // hero peak holds
+      { p: 0.30, v: 0.95 },  // ordered lanes peak through leistungen
+      { p: 0.40, v: 0.60 },
+      { p: 0.50, v: 0.00 }   // gone by the ueber transition
+    ];
+    // Order — how much of the chaos has resolved into the four lanes.
+    // 0 = full chaos, 1 = fully aligned. Smoothstep-eased in JS so the "snap" reads deliberate.
+    // Scene-2 timing pulled ~8% earlier in the scroll so the lanes form sooner.
+    const ORDER_KEYS = [
+      { p: 0.00, v: 0.00 },
+      { p: 0.09, v: 0.00 },  // chaos holds briefly
+      { p: 0.14, v: 0.45 },  // first snap into lanes
+      { p: 0.20, v: 0.88 },
+      { p: 0.26, v: 1.00 },  // fully aligned
+      { p: 1.00, v: 1.00 }
+    ];
+    // Workshop — scene 3 amber-lit interior. Pulled ~8% earlier so the terminal
+    // appears while the camera is still tilting in, not after it has settled.
+    const WORKSHOP_KEYS = [
+      { p: 0.00, v: 0.00 },
+      { p: 0.32, v: 0.00 },
+      { p: 0.40, v: 0.55 },  // emerging mid pull-back
+      { p: 0.48, v: 1.00 },  // full warmth as the camera lands
+      { p: 0.58, v: 1.00 },  // held through ueber
+      { p: 0.66, v: 0.30 },  // fading as preise approaches
+      { p: 0.76, v: 0.00 },
+      { p: 1.00, v: 0.00 }
+    ];
+    // Calmed city — scene 4. Drives green-bias on skyline + distant traffic glints
+    // through preise + faq. One continuous vista — both sections share it.
+    const CALM_KEYS = [
+      { p: 0.00, v: 0.00 },
+      { p: 0.55, v: 0.00 },
+      { p: 0.66, v: 1.00 },  // preise — full calm
+      { p: 0.83, v: 1.00 },  // faq — held (one continuous shot, not two)
+      { p: 0.94, v: 0.55 },  // softening as horizon takes the eye
+      { p: 1.00, v: 0.35 }
+    ];
+    // Horizon — scene 5. Alpine ridge wireframe at the deepest distance. Last beat.
+    const HORIZON_KEYS = [
+      { p: 0.00, v: 0.00 },
+      { p: 0.85, v: 0.00 },
+      { p: 0.93, v: 0.70 },
+      { p: 1.00, v: 1.00 }
+    ];
+
+    const STORM_COUNT   = 5000;
+    const HOOK_COUNT    = 10;
+    const FAKEWIN_COUNT = 6;
+    const BSOD_COUNT    = 14;
+    const DB_COUNT      = 10;     // green database cylinders (Datenrettung / Backup)
+
+    // Four lanes (left → right): RED, PINK, BLUE, GREEN. Each particle is one of
+    // these four colors from frame zero — the only thing u_order changes is whether
+    // it's drifting through chaos or snapped to its matching-colored stream.
+    const LANE_AXES   = [ { x: -22, y: 0 }, { x: -7, y: 0 }, { x: 7, y: 0 }, { x: 22, y: 0 } ];
+    const LANE_COLORS = [ 0xff525c, 0xff2bd6, 0x2bd5ff, 0x39ff7a ];   // red, pink, blue, green
+
+    const bg = {
+      renderer: null,
+      scene:    null,
+      camera:   null,
+      storm:    null,
+      threats:  [],          // [{ inst, data, opts }, ...]
+      lanes:    [],          // [mesh, ...]
+      raf:      0,
+      destroyed: false,
+      progress: 0,
+      currentSectionId: 'hero',
+      camTarget: { z: CAMERA_KEYS[0].z, y: CAMERA_KEYS[0].y, rotX: CAMERA_KEYS[0].rotX },
+      stormIntensity:    1.0,
+      stormOrder:        0.0,
+      workshopIntensity: 0.0,
+      calmIntensity:     0.0,
+      horizonIntensity:  0.0,
+      startT: 0,
+      lastT:  0,
+      time:   0
     };
-    let cursorWorld = { x: 0, y: 0 };
 
-    function initThree() {
-      if (typeof THREE === 'undefined') return false;
-      if (motionReduced) return false;
-
-      const canvas = $('#bgCanvas');
-      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.2 : 1.75));
-      renderer.setSize(window.innerWidth, window.innerHeight, false);
-      renderer.setClearColor(0x000000, 0);
-
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
-      camera.position.z = 28;
-
-      uniforms.u_colorBase.value = new THREE.Color(0x39ff7a);
-      uniforms.u_colorRed.value  = new THREE.Color(0xff4a5b);
-      uniforms.u_cursor.value    = new THREE.Vector2(0, 0);
-
-      buildParticles();
-      buildWireframes();
-      buildScanRing();
-      animate();
-      return true;
+    function _bgInterpCam(p) {
+      const keys = CAMERA_KEYS;
+      if (p <= keys[0].p)              return { z: keys[0].z, y: keys[0].y, rotX: keys[0].rotX };
+      if (p >= keys[keys.length-1].p)  return { z: keys[keys.length-1].z, y: keys[keys.length-1].y, rotX: keys[keys.length-1].rotX };
+      for (let i = 0; i < keys.length - 1; i++) {
+        const a = keys[i], b = keys[i+1];
+        if (p >= a.p && p <= b.p) {
+          const t = (p - a.p) / (b.p - a.p);
+          // ease the ueber transition (the single biggest motion beat)
+          const ease = (i === 2) ? (t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2) : t;
+          return {
+            z:    a.z    + (b.z    - a.z)    * ease,
+            y:    a.y    + (b.y    - a.y)    * ease,
+            rotX: a.rotX + (b.rotX - a.rotX) * ease
+          };
+        }
+      }
+      return bg.camTarget;
+    }
+    function _bgInterpStorm(p) {
+      const keys = STORM_KEYS;
+      if (p <= keys[0].p) return keys[0].v;
+      const last = keys[keys.length-1];
+      if (p >= last.p)    return last.v;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const a = keys[i], b = keys[i+1];
+        if (p >= a.p && p <= b.p) {
+          const t = (p - a.p) / (b.p - a.p);
+          return a.v + (b.v - a.v) * t;
+        }
+      }
+      return 0;
+    }
+    function _bgInterpOrder(p) {
+      const keys = ORDER_KEYS;
+      if (p <= keys[0].p) return keys[0].v;
+      const last = keys[keys.length-1];
+      if (p >= last.p)    return last.v;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const a = keys[i], b = keys[i+1];
+        if (p >= a.p && p <= b.p) {
+          const t = (p - a.p) / (b.p - a.p);
+          // smoothstep ease — the snap into lanes feels deliberate, not linear
+          const e = t * t * (3.0 - 2.0 * t);
+          return a.v + (b.v - a.v) * e;
+        }
+      }
+      return last.v;
+    }
+    function _bgInterpWorkshop(p) {
+      const keys = WORKSHOP_KEYS;
+      if (p <= keys[0].p) return keys[0].v;
+      const last = keys[keys.length-1];
+      if (p >= last.p)    return last.v;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const a = keys[i], b = keys[i+1];
+        if (p >= a.p && p <= b.p) {
+          const t = (p - a.p) / (b.p - a.p);
+          const e = t * t * (3.0 - 2.0 * t);
+          return a.v + (b.v - a.v) * e;
+        }
+      }
+      return last.v;
+    }
+    function _bgInterpCalm(p) {
+      const keys = CALM_KEYS;
+      if (p <= keys[0].p) return keys[0].v;
+      const last = keys[keys.length-1];
+      if (p >= last.p)    return last.v;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const a = keys[i], b = keys[i+1];
+        if (p >= a.p && p <= b.p) {
+          const t = (p - a.p) / (b.p - a.p);
+          const e = t * t * (3.0 - 2.0 * t);
+          return a.v + (b.v - a.v) * e;
+        }
+      }
+      return last.v;
+    }
+    function _bgInterpHorizon(p) {
+      const keys = HORIZON_KEYS;
+      if (p <= keys[0].p) return keys[0].v;
+      const last = keys[keys.length-1];
+      if (p >= last.p)    return last.v;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const a = keys[i], b = keys[i+1];
+        if (p >= a.p && p <= b.p) {
+          const t = (p - a.p) / (b.p - a.p);
+          const e = t * t * (3.0 - 2.0 * t);
+          return a.v + (b.v - a.v) * e;
+        }
+      }
+      return last.v;
     }
 
-    function buildParticles() {
-      const N = isMobile ? 1200 : 3200;
+    // ============== STORM — shader-driven THREE.Points with chaos↔order lerp ==============
+    // The same point cloud is both scene-1 chaos AND the scene-2 ordered lanes.
+    // Each particle is born with a lane assignment (aLane 0..3). The vertex shader
+    // computes both a chaos position and an ordered (lane) position and lerps between
+    // them by u_order. Colors lerp red/magenta → per-lane cyan/green.
+    function buildStorm() {
+      const N = STORM_COUNT;
       const positions = new Float32Array(N * 3);
       const seeds     = new Float32Array(N);
+      const types     = new Float32Array(N);
       const speeds    = new Float32Array(N);
+      const lanes     = new Float32Array(N);
       for (let i = 0; i < N; i++) {
-        positions[i*3]   = (Math.random() - 0.5) * 80;     // x
-        positions[i*3+1] = (Math.random() - 0.5) * 60;     // y
-        positions[i*3+2] = (Math.random() - 0.5) * 40;     // z
-        seeds[i]   = Math.random() * 6.2832;
-        speeds[i]  = 0.6 + Math.random() * 1.4;
+        positions[i*3]   = (Math.random() - 0.5) * 110;
+        positions[i*3+1] = (Math.random() - 0.5) * 65;
+        positions[i*3+2] = (Math.random() - 0.5) * 220 - 80;
+        seeds[i]  = Math.random() * 6.2832;
+        types[i]  = Math.random() < 0.70 ? 0.0 : 1.0;   // 70% red shards, 30% magenta noise
+        speeds[i] = 0.5 + Math.random() * 1.0;
+        lanes[i]  = Math.floor(Math.random() * 4);       // even split across the 4 lanes
       }
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
-      geo.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+      geo.setAttribute('aSeed',    new THREE.BufferAttribute(seeds, 1));
+      geo.setAttribute('aType',    new THREE.BufferAttribute(types, 1));
+      geo.setAttribute('aSpeed',   new THREE.BufferAttribute(speeds, 1));
+      geo.setAttribute('aLane',    new THREE.BufferAttribute(lanes, 1));
 
-      const vert = `
-        uniform float u_time;
-        uniform float u_chaos;
-        uniform vec2  u_cursor;
-        attribute float aSeed;
-        attribute float aSpeed;
-        varying float vDepth;
-        varying float vAlpha;
-        void main() {
-          vec3 pos = position;
-          // vertical flow (always downward); speed accelerates as chaos drops
-          float t = u_time * (0.9 + (1.0 - u_chaos) * 0.6) * aSpeed;
-          pos.y = mod(pos.y - t + aSeed * 18.0, 60.0) - 30.0;
-          // chaos: jitter X
-          float jitter = sin(u_time * 1.5 + aSeed * 6.28) * u_chaos * 1.5;
-          pos.x += jitter;
-          // cursor attraction (subtle)
-          vec2 toCur = vec2(u_cursor.x - pos.x, u_cursor.y - pos.y);
-          float d = length(toCur);
-          float pull = smoothstep(14.0, 0.0, d) * 0.6;
-          pos.xy += normalize(toCur + vec2(0.0001)) * pull;
-          vDepth = clamp((pos.z + 20.0) / 40.0, 0.0, 1.0);
-          vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
-          float ps = (260.0 / -mvPos.z) * (0.4 + vDepth * 0.9);
-          gl_PointSize = clamp(ps, 1.0, 6.0);
-          gl_Position = projectionMatrix * mvPos;
-          vAlpha = vDepth;
-        }
-      `;
-      const frag = `
-        precision mediump float;
-        uniform vec3 u_colorBase;
-        uniform vec3 u_colorRed;
-        uniform float u_redMix;
-        uniform float u_brightness;
-        uniform float u_density;
-        varying float vDepth;
-        varying float vAlpha;
-        void main() {
-          vec2 uv = gl_PointCoord - 0.5;
-          float d = length(uv);
-          float a = smoothstep(0.5, 0.0, d);
-          vec3 col = mix(u_colorBase, u_colorRed, u_redMix);
-          col *= (0.35 + u_brightness * 1.4);
-          gl_FragColor = vec4(col, a * vAlpha * u_density * 0.9);
-        }
-      `;
+      const laneU      = LANE_AXES.map(a => new THREE.Vector2(a.x, a.y));
+      const laneColors = LANE_COLORS.map(c => new THREE.Color(c));
+
       const mat = new THREE.ShaderMaterial({
-        uniforms: uniforms,
-        vertexShader: vert,
-        fragmentShader: frag,
+        uniforms: {
+          u_time:      { value: 0 },
+          u_intensity: { value: 1 },
+          u_order:     { value: 0 },
+          u_cameraZ:   { value: 0 },
+          u_lanePos:   { value: laneU },
+          u_laneColor: { value: laneColors }
+        },
+        vertexShader: [
+          'uniform float u_time;',
+          'uniform float u_cameraZ;',
+          'uniform float u_order;',
+          'uniform vec2  u_lanePos[4];',
+          'attribute float aSeed;',
+          'attribute float aType;',
+          'attribute float aSpeed;',
+          'attribute float aLane;',
+          'varying float vAlpha;',
+          'varying float vOrder;',
+          'varying float vLane;',
+          'void main() {',
+          // -------- CHAOS position (same drift as step 2 storm) --------
+          '  vec3 chaos = position;',
+          '  float driftZ = u_time * (3.5 + aSpeed * 7.0);',
+          '  float relZ = mod(chaos.z + driftZ - u_cameraZ + 220.0, 220.0) - 210.0;',
+          '  chaos.z = relZ + u_cameraZ;',
+          '  chaos.x += sin(u_time * 0.5 + aSeed * 9.42) * 2.2;',
+          '  chaos.y += cos(u_time * 0.7 + aSeed * 6.28) * 1.6;',
+          // -------- ORDERED position (snap to lane axis with river-jitter) --------
+          '  int li = int(aLane + 0.5);',
+          '  vec2 lp = u_lanePos[0];',
+          '  if      (li == 1) lp = u_lanePos[1];',
+          '  else if (li == 2) lp = u_lanePos[2];',
+          '  else if (li == 3) lp = u_lanePos[3];',
+          '  float jitterX = sin(u_time * 1.3 + aSeed * 13.14 + chaos.z * 0.06) * 0.9;',
+          '  float jitterY = cos(u_time * 1.8 + aSeed * 7.27  + chaos.z * 0.08) * 0.55;',
+          '  vec3 ordered = vec3(lp.x + jitterX, lp.y + jitterY, chaos.z);',
+          // smoothstep ease so the snap reads as a deliberate beat, not a linear slide
+          '  float orderSmooth = smoothstep(0.0, 1.0, u_order);',
+          '  vec3 pos = mix(chaos, ordered, orderSmooth);',
+          '  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);',
+          '  float depth = clamp(-mvPos.z, 1.0, 260.0);',
+          '  gl_PointSize = (290.0 / depth) * (1.0 + aType * 0.7);',
+          '  gl_Position = projectionMatrix * mvPos;',
+          // Legibility fade near screen center (the headline) — but once ordered,
+          // particles live in lanes (off-center), so we relax the fade as order rises.
+          '  vec3 ndc = gl_Position.xyz / max(gl_Position.w, 0.001);',
+          '  float centerDist = length(ndc.xy * vec2(1.0, 0.55));',
+          '  float legibility = mix(smoothstep(0.10, 0.55, centerDist), 1.0, orderSmooth);',
+          '  vAlpha = clamp(1.0 - depth / 260.0, 0.0, 1.0) * (0.35 + legibility * 0.65);',
+          '  vOrder = orderSmooth;',
+          '  vLane = aLane;',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_intensity;',
+          'uniform vec3  u_laneColor[4];',
+          'varying float vAlpha;',
+          'varying float vOrder;',
+          'varying float vLane;',
+          'void main() {',
+          '  vec2 uv = gl_PointCoord - 0.5;',
+          '  float d = length(uv);',
+          '  float a = smoothstep(0.5, 0.0, d);',
+          // Every particle is one of the four lane colors (red / pink / blue / green) the
+          // whole time — chaos or ordered. The only thing that changes with u_order is its
+          // trajectory: from free drift to a snapped flow along its matching-colored stream.
+          '  int li = int(vLane + 0.5);',
+          '  vec3 col = u_laneColor[0];',
+          '  if      (li == 1) col = u_laneColor[1];',
+          '  else if (li == 2) col = u_laneColor[2];',
+          '  else if (li == 3) col = u_laneColor[3];',
+          // ordered particles burn slightly hotter — sells the "snapped & confident" beat
+          '  col *= 1.0 + vOrder * 0.35;',
+          '  gl_FragColor = vec4(col, a * vAlpha * u_intensity * 0.85);',
+          '}'
+        ].join('\n'),
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
-      particles = new THREE.Points(geo, mat);
-      scene.add(particles);
+      return new THREE.Points(geo, mat);
     }
 
-    function buildWireframes() {
-      // Multiple wireframe shapes at different depths
-      const shapes = [
-        { geom: new THREE.IcosahedronGeometry(7, 1), pos: [ 0, 0, -2],  rotSpeed: 0.08, scale: 1.0 },
-        { geom: new THREE.OctahedronGeometry(4, 0),  pos: [-18, 6, -8], rotSpeed: 0.14, scale: 1.0 },
-        { geom: new THREE.TorusGeometry(5, 0.3, 8, 32), pos: [16, -5, -10], rotSpeed: 0.06, scale: 1.0 },
-        { geom: new THREE.IcosahedronGeometry(2.4, 0), pos: [-12, -10, 2], rotSpeed: 0.18, scale: 1.0 },
-        { geom: new THREE.BoxGeometry(3, 3, 3),       pos: [20, 10, -4], rotSpeed: 0.10, scale: 1.0 },
+    // ============== Lane — luminous tube along z-axis ==============
+    // Cone-shaped cylinder narrow at far end, wide at near end → reads as a
+    // perspective "river" of light. Additive shader paints a soft glow with
+    // a flowing pulse running toward the camera.
+    function buildLaneGeo() {
+      const geo = new THREE.CylinderGeometry(0.35, 2.0, 240, 16, 1, true);
+      geo.rotateX(Math.PI / 2);   // align cylinder axis with world z
+      return geo;
+    }
+    function buildLaneMaterial(colorHex) {
+      return new THREE.ShaderMaterial({
+        uniforms: {
+          u_time:      { value: 0 },
+          u_intensity: { value: 0 },                              // ramps with stormOrder
+          u_color:     { value: new THREE.Color(colorHex) }
+        },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'varying vec3 vWorld;',
+          'void main() {',
+          '  vUv = uv;',
+          '  vWorld = (modelMatrix * vec4(position, 1.0)).xyz;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'uniform vec3  u_color;',
+          'varying vec2 vUv;',
+          'varying vec3 vWorld;',
+          'void main() {',
+          // bright pulses flow along world z toward the camera (+z direction)
+          '  float flowZ = mod(vWorld.z * 0.05 + u_time * 0.22, 1.0);',
+          '  float pulse = exp(-pow((flowZ - 0.5) * 5.0, 2.0));',
+          // bright at the tube spine (uv.x near 0.0 or 1.0 is the seam — symmetric),
+          // softer at the silhouette edges (uv.x = 0.5 around the cylinder ring)
+          '  float ring = sin(vUv.x * 3.14159);',          // 0..1..0 around tube
+          '  float spine = 1.0 - ring;',                    // hot in the middle of the visible silhouette
+          '  float glow = 0.45 + spine * 0.45;',
+          '  float a = (glow + pulse * 0.55) * u_intensity;',
+          '  gl_FragColor = vec4(u_color, a * 0.55);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+    }
+
+    // ============== Distant cyber-city skyline (wireframe towers) ==============
+    // ~16 tall, thin wireframe boxes far behind the storm. Edges are displaced
+    // by per-vertex noise * (1 - u_order) — the city fragments during chaos and
+    // stabilises as the lanes lock in. Colors pulled from LANE_COLORS so the
+    // distance ties to the same palette as the streams.
+    function buildSkyline() {
+      const group = new THREE.Group();
+      const N = 16;
+      for (let i = 0; i < N; i++) {
+        const x = (Math.random() - 0.5) * 260;
+        const z = -190 + (Math.random() - 0.5) * 80;
+        const w = 1.8 + Math.random() * 3.4;
+        const d = 1.6 + Math.random() * 2.6;
+        const h = 14 + Math.random() * 38;
+        const yBase = -24 + Math.random() * 8;
+        const colorIdx = Math.floor(Math.random() * 4);
+
+        const boxGeo = new THREE.BoxGeometry(w, h, d);
+        const edges  = new THREE.EdgesGeometry(boxGeo);
+        // Per-vertex seed so the displacement is incoherent (each edge wobbles differently)
+        const seeds = new Float32Array(edges.attributes.position.count);
+        for (let v = 0; v < seeds.length; v++) seeds[v] = Math.random();
+        edges.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
+
+        const mat = new THREE.ShaderMaterial({
+          uniforms: {
+            u_time:  { value: 0 },
+            u_order: { value: 0 },
+            u_calm:  { value: 0 },
+            u_color: { value: new THREE.Color(LANE_COLORS[colorIdx]) },
+            u_height: { value: h }
+          },
+          vertexShader: [
+            'uniform float u_time;',
+            'uniform float u_order;',
+            'attribute float aSeed;',
+            'varying float vY;',
+            'varying float vAmp;',
+            'void main() {',
+            '  float amp = (1.0 - u_order) * 0.65;',
+            '  vec3 pos = position;',
+            '  pos.x += sin(u_time * 1.20 + aSeed * 31.4) * amp;',
+            '  pos.y += cos(u_time * 1.40 + aSeed * 21.7) * amp * 0.5;',
+            '  pos.z += sin(u_time * 0.90 + aSeed * 19.3) * amp * 0.4;',
+            '  vY = position.y;',
+            '  vAmp = amp;',
+            '  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);',
+            '}'
+          ].join('\n'),
+          fragmentShader: [
+            'uniform vec3 u_color;',
+            'uniform float u_height;',
+            'uniform float u_calm;',
+            'varying float vY;',
+            'varying float vAmp;',
+            'void main() {',
+            // brighter near the top of the tower (neon roof line)
+            '  float topFade = 0.55 + 0.45 * smoothstep(-u_height * 0.45, u_height * 0.45, vY);',
+            // calmed-city wash: the city's existing neon biases toward green and brightens —
+            // "same buildings, settled". 0 = original lane color, 1 = mostly green-confident.
+            '  vec3 green = vec3(0.30, 1.00, 0.55);',
+            '  vec3 col = mix(u_color, green, u_calm * 0.55);',
+            '  float a = mix(0.22, 0.50, u_calm);',
+            '  gl_FragColor = vec4(col * topFade, a);',
+            '}'
+          ].join('\n'),
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+
+        const tower = new THREE.LineSegments(edges, mat);
+        tower.position.set(x, yBase + h * 0.5, z);
+        group.add(tower);
+      }
+      return group;
+    }
+
+    // ============== Volumetric fog backplane ==============
+    // Single subtle plane far behind the skyline. Slow drifting noise gives the
+    // storm something to "sit inside". Subtle: alpha ~0.22 peak, radial vignette
+    // darker at the edges so it doesn't fight content legibility at screen center.
+    function buildFog() {
+      const geo = new THREE.PlaneGeometry(420, 240);
+      const mat = new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_order: { value: 0 }, u_calm: { value: 0 } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vUv = uv;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_order;',
+          'uniform float u_calm;',
+          'varying vec2 vUv;',
+          'float hash21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
+          'float vnoise(vec2 p) {',
+          '  vec2 i = floor(p); vec2 f = fract(p);',
+          '  float a = hash21(i);',
+          '  float b = hash21(i + vec2(1.0, 0.0));',
+          '  float c = hash21(i + vec2(0.0, 1.0));',
+          '  float d = hash21(i + vec2(1.0, 1.0));',
+          '  vec2 u = f * f * (3.0 - 2.0 * f);',
+          '  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);',
+          '}',
+          'void main() {',
+          '  vec2 uv = vUv * 4.0;',
+          '  uv.y += u_time * 0.04;',
+          '  float n = vnoise(uv) * 0.65 + vnoise(uv * 2.3 + 1.7) * 0.35;',
+          // edge vignette so the fog is densest mid-frame (behind the storm) and fades at the corners
+          '  float vig = smoothstep(0.55, 0.18, length(vUv - 0.5));',
+          // chaos: dark plum tint; ordered: dark teal tint; calm: deep green
+          '  vec3 chaosTint   = vec3(0.18, 0.06, 0.16);',
+          '  vec3 orderedTint = vec3(0.06, 0.16, 0.22);',
+          '  vec3 calmTint    = vec3(0.04, 0.18, 0.12);',
+          '  vec3 col = mix(chaosTint, orderedTint, u_order);',
+          '  col = mix(col, calmTint, u_calm);',
+          // calm air is also thinner — "the rain has stopped, the air has settled"
+          '  float a = n * vig * mix(0.22, 0.14, u_calm);',
+          '  gl_FragColor = vec4(col, a);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+      return new THREE.Mesh(geo, mat);
+    }
+
+    // ============== Threat #1 — Phishing hook (tube along a J-curve) ==============
+    function buildHookGeo() {
+      const pts = [
+        new THREE.Vector3( 0.0,  1.9, 0),
+        new THREE.Vector3( 0.0,  0.5, 0),
+        new THREE.Vector3( 0.0, -0.7, 0),
+        new THREE.Vector3(-0.4, -1.3, 0),
+        new THREE.Vector3(-0.95,-1.0, 0),
+        new THREE.Vector3(-1.0, -0.3, 0),
+        new THREE.Vector3(-0.6,  0.0, 0),
+        new THREE.Vector3(-0.75, 0.3, 0)   // barb tip
       ];
-      const lineMat = new THREE.LineBasicMaterial({
-        color: 0x39ff7a,
+      const curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
+      return new THREE.TubeGeometry(curve, 38, 0.07, 6, false);
+    }
+    function buildHookMaterial() {
+      return new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 1 }, u_order: { value: 0 } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vUv = uv;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        // vUv.x runs along the curve (0 = rod tail, 1 = barb). Use it as a head-to-tail
+        // alpha fade so each hook reads like a frayed neon filament. Hooks stay visible
+        // through the order transition — they ride the stream along with the particles.
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'uniform float u_order;',
+          'varying vec2 vUv;',
+          'void main() {',
+          '  float t = vUv.x;',
+          '  float trail = smoothstep(0.0, 0.55, t);',
+          '  float barb  = smoothstep(0.86, 1.0, t);',
+          '  vec3 col = vec3(1.0, 0.32, 0.36) * (0.65 + barb * 0.8);',
+          '  col *= 0.82 + 0.18 * sin(u_time * 3.0 + t * 14.0);',
+          '  gl_FragColor = vec4(col, trail * u_intensity * 0.9);',
+          '}'
+        ].join('\n'),
         transparent: true,
-        opacity: 0.35,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+    }
+
+    // ============== Threat #2 — Ghost fake-login window (procedural chrome with red tells) ==============
+    function buildFakeWindowGeo() { return new THREE.PlaneGeometry(8, 5); }
+    function buildFakeWindowMaterial() {
+      return new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 1 }, u_order: { value: 0 } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vUv = uv;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'uniform float u_order;',
+          'varying vec2 vUv;',
+          'float rect(vec2 uv, vec2 a, vec2 b) {',
+          '  vec2 ab = step(a, uv) - step(b, uv);',
+          '  return ab.x * ab.y;',
+          '}',
+          'float box(vec2 uv, vec2 a, vec2 b, float w) {',
+          '  return max(0.0, rect(uv, a, b) - rect(uv, a + vec2(w), b - vec2(w)));',
+          '}',
+          'void main() {',
+          '  vec2 uv = vUv;',
+          '  vec3 bgFill = vec3(0.04, 0.06, 0.10);',
+          '  vec3 ink    = vec3(0.70, 0.75, 0.85);',
+          '  vec3 pink   = vec3(1.00, 0.17, 0.84);',                     // pink lane palette
+          '  float body     = rect(uv, vec2(0.0), vec2(1.0));',
+          '  float titleBar = rect(uv, vec2(0.0, 0.85), vec2(1.0, 1.0));',
+          '  float in1      = box(uv, vec2(0.10, 0.50), vec2(0.90, 0.66), 0.013);',
+          '  float in2      = box(uv, vec2(0.10, 0.28), vec2(0.90, 0.44), 0.013);',
+          '  float btn      = rect(uv, vec2(0.60, 0.06), vec2(0.92, 0.20));',
+          '  float btnOL    = box(uv, vec2(0.60, 0.06), vec2(0.92, 0.20), 0.012);',
+          '  float outline  = box(uv, vec2(0.0), vec2(1.0), 0.014);',
+          // glitch border jitter = the off-by-one chrome tell. Calms as order rises.
+          '  float jitterAmp = 1.0 - smoothstep(0.0, 0.5, u_order);',
+          '  float jitter = step(0.92, sin(u_time * 8.0 + uv.y * 60.0 + uv.x * 22.0)) * jitterAmp;',
+          '  vec3 outCol = mix(ink, pink, jitter * 0.65);',
+          '  vec3 col = vec3(0.0);',
+          '  col = mix(col, bgFill,       body);',
+          '  col = mix(col, bgFill * 1.7, titleBar);',
+          '  col = mix(col, outCol,       outline);',
+          '  col = mix(col, ink * 0.40,   in1);',
+          '  col = mix(col, ink * 0.40,   in2);',
+          '  col = mix(col, pink * 0.55,  btn);',
+          '  col = mix(col, pink * 1.20,  btnOL);',
+          '  if (uv.y > 0.87 && uv.y < 0.97 && uv.x > 0.05 && uv.x < 0.13) {',
+          '    col = mix(col, pink * 0.85, 0.7);',
+          '  }',
+          // fake windows stay visible — they ride the stream too; chrome jitter (above) calms as order rises
+          '  float a = (body * 0.55 + outline * 0.4) * u_intensity;',
+          '  if (a < 0.01) discard;',
+          '  gl_FragColor = vec4(col, clamp(a, 0.0, 0.85));',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+    }
+
+    // ============== Threat #3 — BSOD shard (procedural face + noise-shattered edges) ==============
+    function buildBsodGeo() { return new THREE.PlaneGeometry(4.5, 3); }
+    function buildBsodMaterial() {
+      return new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 1 }, u_order: { value: 0 } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vUv = uv;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        // Edge pixel-shatter is implemented by discarding fragments where the
+        // distance-to-edge is less than a per-cell noise value — the geometry stays
+        // a clean rect but the silhouette pixel-tears. As u_order rises the shatter
+        // amplitude collapses to zero (clean rectangles) and the palette shifts
+        // toward ordered cyan — "BSOD fragments reassemble" per the brief.
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'uniform float u_order;',
+          'varying vec2 vUv;',
+          'float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
+          'void main() {',
+          '  vec2 uv = vUv;',
+          '  float shatterAmt = 0.10 * (1.0 - smoothstep(0.0, 0.7, u_order));',
+          '  float edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));',
+          '  float n = hash(floor(uv * 26.0));',
+          '  if (edge < n * shatterAmt) discard;',
+          // Keep classic BSOD blue — shards stay recognisable as they reassemble inside their stream.
+          '  vec3 col = vec3(0.07, 0.22, 0.72);',
+          '  vec3 ink  = vec3(0.85, 0.88, 0.95);',
+          '  if (uv.y > 0.74 && uv.x > 0.08 && uv.x < 0.22) col = ink * 0.85;',
+          '  float l1 = step(0.58, uv.y) * step(uv.y, 0.62) * step(0.10, uv.x) * step(uv.x, 0.90);',
+          '  float l2 = step(0.46, uv.y) * step(uv.y, 0.50) * step(0.10, uv.x) * step(uv.x, 0.70);',
+          '  float l3 = step(0.34, uv.y) * step(uv.y, 0.38) * step(0.10, uv.x) * step(uv.x, 0.82);',
+          '  float l4 = step(0.18, uv.y) * step(uv.y, 0.22) * step(0.10, uv.x) * step(uv.x, 0.55);',
+          '  col = mix(col, ink, (l1 + l2 + l3 + l4) * 0.7);',
+          // glitch tear fades out with order
+          '  float tearAmt = 1.0 - smoothstep(0.0, 0.6, u_order);',
+          '  float tear = step(0.94, sin(u_time * 14.0 + uv.y * 36.0)) * tearAmt;',
+          '  col = mix(col, ink * 1.1, tear * 0.5);',
+          '  gl_FragColor = vec4(col, 0.62 * u_intensity);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+    }
+
+    // ============== Threat #4 — Database cylinder (green data structure) ==============
+    // Short squat closed cylinder with horizontal band stripes painted on the lateral
+    // surface and a thin ring inscription on the caps. Edge shatter (mirrors BSOD)
+    // collapses to clean as u_order rises — reads as "data that was being corrupted in
+    // the storm is now intact and flowing into the green lane."
+    function buildDatabaseGeo() {
+      return new THREE.CylinderGeometry(0.95, 0.95, 1.5, 24, 1, false);
+    }
+    function buildDatabaseMaterial() {
+      return new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 1 }, u_order: { value: 0 } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'varying vec3 vLocal;',
+          'void main() {',
+          '  vUv = uv;',
+          '  vLocal = position;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'uniform float u_order;',
+          'varying vec2 vUv;',
+          'varying vec3 vLocal;',
+          'float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
+          'void main() {',
+          // edge shatter collapses with order (clean by u_order = 1)
+          '  float shatterAmt = 0.10 * (1.0 - smoothstep(0.0, 0.7, u_order));',
+          '  float n = hash(floor(vUv * 28.0));',
+          '  float edge = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));',
+          '  if (edge < n * shatterAmt) discard;',
+          // distinguish cap (|y| ≈ 0.75) from lateral (|y| < 0.65) by local y
+          '  float onCap = step(0.65, abs(vLocal.y));',
+          '  vec3 green     = vec3(0.22, 1.00, 0.48);',
+          '  vec3 greenDeep = vec3(0.06, 0.45, 0.22);',
+          '  vec3 col = green * 0.45;',
+          '  if (onCap < 0.5) {',
+          // lateral: three horizontal "drive platter" bands
+          '    float bandY = (vLocal.y + 0.75) / 1.5;',
+          '    float b1 = step(0.20, bandY) * step(bandY, 0.26);',
+          '    float b2 = step(0.42, bandY) * step(bandY, 0.48);',
+          '    float b3 = step(0.64, bandY) * step(bandY, 0.70);',
+          '    col = mix(col, green * 1.20, b1 + b2 + b3);',
+          // chaos flicker — chunks brightening like data corruption pulses
+          '    float chaosFlick = step(0.88, sin(u_time * 10.0 + vLocal.y * 14.0 + vLocal.x * 8.0));',
+          '    float flickAmp = 1.0 - smoothstep(0.0, 0.6, u_order);',
+          '    col = mix(col, green * 1.60, chaosFlick * flickAmp * 0.5);',
+          '  } else {',
+          // caps: radial gradient + inscribed ring (a faint disc edge)
+          '    float r = length(vLocal.xz) / 0.95;',
+          '    col = mix(green, greenDeep, r * 0.5);',
+          '    float ring = smoothstep(0.55, 0.52, r) - smoothstep(0.52, 0.49, r);',
+          '    col = mix(col, green * 1.4, ring);',
+          '  }',
+          '  gl_FragColor = vec4(col, 0.70 * u_intensity);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+    }
+
+    // ============== Scene 3 — Workshop arrival ==============
+    // The brief calls for an implied "quiet neon workshop / desk vista": amber bounce light,
+    // an empty chair (never a person), a lamp halo, slow dust motes. Everything is driven
+    // by bg.workshopIntensity so the elements appear with the ueber pull-back and fade
+    // away again before the camera moves into preise.
+
+    function buildLampHalo() {
+      const group = new THREE.Group();
+
+      // Bright core — small additive amber sphere (the lamp filament)
+      const coreMat = new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 0 } },
+        vertexShader: [
+          'void main() {',
+          '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'void main() {',
+          '  vec3 amber = vec3(1.0, 0.69, 0.23);',
+          '  float pulse = 0.88 + 0.12 * sin(u_time * 1.4);',
+          '  gl_FragColor = vec4(amber * pulse * 1.5, u_intensity * 0.95);',
+          '}'
+        ].join('\n'),
+        transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
-      shapes.forEach((s, i) => {
-        const edges = new THREE.EdgesGeometry(s.geom);
-        const line = new THREE.LineSegments(edges, lineMat.clone());
-        line.position.set(...s.pos);
-        line.userData = { rotSpeed: s.rotSpeed, baseOpacity: 0.35, idx: i };
-        scene.add(line);
-        wireframes.push(line);
-      });
-    }
+      const core = new THREE.Mesh(new THREE.SphereGeometry(0.5, 14, 10), coreMat);
+      group.add(core);
 
-    function buildScanRing() {
-      const geom = new THREE.RingGeometry(2, 2.4, 64);
-      const mat = new THREE.MeshBasicMaterial({
-        color: 0x2bd5ff,
+      // Soft halo — large billboarded plane with radial falloff
+      const haloMat = new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 0 } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vUv = uv;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vec3 amber = vec3(1.0, 0.69, 0.23);',
+          '  float r = length(vUv - 0.5) * 2.0;',
+          '  float falloff = exp(-r * 2.8);',
+          '  float pulse = 0.92 + 0.08 * sin(u_time * 0.9);',
+          '  gl_FragColor = vec4(amber * pulse, falloff * u_intensity * 0.55);',
+          '}'
+        ].join('\n'),
         transparent: true,
-        opacity: 0.0,
-        side: THREE.DoubleSide,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
-      scanRing = new THREE.Mesh(geom, mat);
-      scanRing.position.z = -4;
-      scene.add(scanRing);
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), haloMat);
+      group.add(halo);
+
+      group.userData = { core, halo };
+      return group;
     }
 
-    function setSceneColor(hex) {
-      const c = new THREE.Color(hex);
-      uniforms.u_colorBase.value.copy(c);
-      wireframes.forEach(w => w.material.color.copy(c));
-    }
+    // Terminal — canvas-textured plane showing someone fixing a data structure.
+    // Easter eggs woven through the text:
+    //   Hitchhiker's: DONT_PANIC, 0x2A (= 42), "life, universe, everything",
+    //                 "answer = 42", "so long, and thanks for all the fish"
+    //   Cyberpunk:    night_city dir, "preem ware, choom",
+    //                 "wake_up_samurai", "we_have_a_city_to_burn"
+    // Blinking cursor is painted by the shader (canvas leaves it out and exports
+    // the cursor box's UV bounds as a uniform).
+    function _drawTerminalCanvas(canvas) {
+      const W = canvas.width, H = canvas.height;
+      const ctx = canvas.getContext('2d');
 
-    let clock;
-    function animate() {
-      if (!renderer) return;
-      if (!clock) clock = new THREE.Clock();
-      const dt = clock.getDelta();
-      const t = clock.getElapsedTime();
-      uniforms.u_time.value = t;
+      // body bg
+      ctx.fillStyle = '#0a0d14';
+      ctx.fillRect(0, 0, W, H);
 
-      wireframes.forEach((w, i) => {
-        const chaos = uniforms.u_chaos.value;
-        const baseSpd = w.userData.rotSpeed;
-        // halved twice per user feedback — much calmer geometry
-        w.rotation.x += baseSpd * dt * 0.25 * (1 + chaos * 0.9);
-        w.rotation.y += baseSpd * dt * 0.18 * (1 + chaos * 0.6);
-        // skip position/opacity updates while glitching, so the flicker stays visible
-        if (!w.userData.glitching) {
-          const j = Math.sin(t * 5 + i) * chaos * 0.25;
-          w.position.x += (j - (w.position.x - [0,-18,16,-12,20][i])) * 0.05;
-          w.material.opacity = 0.18 + uniforms.u_brightness.value * 0.35;
+      // title bar
+      const barH = 56;
+      ctx.fillStyle = '#1a1d24';
+      ctx.fillRect(0, 0, W, barH);
+
+      // traffic lights
+      ctx.fillStyle = '#ff5f57'; ctx.beginPath(); ctx.arc(36,  barH/2, 10, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#febc2e'; ctx.beginPath(); ctx.arc(68,  barH/2, 10, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#28c840'; ctx.beginPath(); ctx.arc(100, barH/2, 10, 0, Math.PI*2); ctx.fill();
+
+      // title
+      ctx.fillStyle = '#7a8090';
+      ctx.font = '18px "JetBrains Mono", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('robin@workshop — repairing user_data.bak', W / 2, barH / 2);
+
+      // outer frame
+      ctx.strokeStyle = '#2a2d34';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, W - 2, H - 2);
+
+      // body text
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.font = '26px "JetBrains Mono", ui-monospace, monospace';
+
+      const PAL = {
+        prompt: '#39ff7a',
+        cmd:    '#cfd2da',
+        ok:     '#39ff7a',
+        warn:   '#ffb13a',
+        info:   '#2bd5ff',
+        com:    '#7a8090',
+        egg:    '#ff2bd6'    // pink — easter-egg highlight
+      };
+
+      const lines = [
+        [['robin@workshop:~/', 'prompt'], ['night_city', 'egg'], [' $ ', 'prompt'], ['./repair user_data.bak', 'cmd']],
+        [['[scan] ', 'info'], ['partition mount...  ', 'cmd'], ['DONT_PANIC', 'egg']],
+        [['[ok]   ', 'ok'], ['block_', 'cmd'], ['0x2A', 'egg'], [' recovered    ', 'cmd'], ['// life, universe, everything', 'com']],
+        [['[ok]   ', 'ok'], ['block_137 patched       ', 'cmd'], ['// preem ware, choom', 'com']],
+        [['[ok]   ', 'ok'], ['block_451 reconstructed', 'cmd']],
+        [['[ok]   ', 'ok'], ['decrypting heap...', 'cmd']],
+        [['       // ', 'com'], ['wake_up_samurai', 'egg'], [', ', 'com'], ['we_have_a_city_to_burn', 'egg']],
+        [['[warn] ', 'warn'], ['orphaned ptr @ 0x2A', 'cmd']],
+        [['[ok]   ', 'ok'], ['relinked. parity restored.', 'cmd']],
+        [['[ok]   ', 'ok'], ['sha256 verify ', 'cmd'], ['✓', 'ok']],
+        [['robin@workshop:~ $ ', 'prompt'], ['commit && exit', 'cmd']],
+        [['       answer = ', 'cmd'], ['42', 'egg']],
+        [['       // so long, and thanks for all the fish.', 'com']],
+        [['robin@workshop:~ $ ', 'prompt']]   // cursor blinks here, painted by shader
+      ];
+
+      let y = barH + 10;
+      const lineH = 38;
+      let cursorX = 0;     // px coords of cursor block (after the final prompt)
+      let cursorY = 0;
+      for (let li = 0; li < lines.length; li++) {
+        let x = 32;
+        const line = lines[li];
+        for (const [text, kind] of line) {
+          ctx.fillStyle = PAL[kind] || PAL.cmd;
+          ctx.fillText(text, x, y);
+          x += ctx.measureText(text).width;
         }
+        if (li === lines.length - 1) { cursorX = x; cursorY = y; }
+        y += lineH;
+      }
+
+      // return cursor box (in pixel space) for the shader
+      return { cursorX, cursorY, cursorW: 14, cursorH: 28 };
+    }
+
+    function buildTerminal() {
+      const W = 1600, H = 800;
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+
+      // first draw (may use fallback font if Google Fonts haven't loaded yet)
+      const cur = _drawTerminalCanvas(canvas);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.minFilter = THREE.LinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+
+      // redraw once JetBrains Mono finishes loading so text lays out at exact widths
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          const cur2 = _drawTerminalCanvas(canvas);
+          tex.needsUpdate = true;
+          // recompute cursor uniform
+          const mat = mesh.material;
+          mat.uniforms.u_cursorBox.value.set(
+            cur2.cursorX / W,
+            1.0 - (cur2.cursorY + cur2.cursorH) / H,
+            (cur2.cursorX + cur2.cursorW) / W,
+            1.0 - cur2.cursorY / H
+          );
+        });
+      }
+
+      const mat = new THREE.ShaderMaterial({
+        uniforms: {
+          u_tex:       { value: tex },
+          u_time:      { value: 0 },
+          u_intensity: { value: 0 },
+          u_cursorBox: { value: new THREE.Vector4(
+            cur.cursorX / W,
+            1.0 - (cur.cursorY + cur.cursorH) / H,
+            (cur.cursorX + cur.cursorW) / W,
+            1.0 - cur.cursorY / H
+          )}
+        },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vUv = uv;',
+          '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform sampler2D u_tex;',
+          'uniform float u_time;',
+          'uniform float u_intensity;',
+          'uniform vec4  u_cursorBox;',
+          'varying vec2 vUv;',
+          'void main() {',
+          '  vec4 t = texture2D(u_tex, vUv);',
+          // blinking cursor block (painted by shader, not canvas)
+          '  float blink = step(0.5, fract(u_time * 0.55));',
+          '  float curMask = step(u_cursorBox.x, vUv.x) * step(vUv.x, u_cursorBox.z) *',
+          '                  step(u_cursorBox.y, vUv.y) * step(vUv.y, u_cursorBox.w);',
+          '  vec3 cursorCol = vec3(0.22, 1.0, 0.48);',
+          '  vec3 col = mix(t.rgb, cursorCol, curMask * blink);',
+          // CRT scanlines
+          '  col *= 0.92 + 0.08 * sin(vUv.y * 800.0);',
+          // Holographic frame: thin cyan bezel + L-shaped corner brackets at all 4 corners
+          '  float dx = min(vUv.x, 1.0 - vUv.x);',
+          '  float dy = min(vUv.y, 1.0 - vUv.y);',
+          '  float bezel = 1.0 - smoothstep(0.0, 0.014, min(dx, dy));',
+          '  float armLen = 0.075;',
+          '  float armW   = 0.010;',
+          '  float corner = 0.0;',
+          '  if (dx < armW && dy < armLen) corner = 1.0;',
+          '  if (dy < armW && dx < armLen) corner = 1.0;',
+          '  vec3 cyan = vec3(0.22, 0.84, 1.0);',
+          '  col = mix(col, cyan * 0.70, bezel * 0.55);',
+          '  col = mix(col, cyan * 1.20, corner);',
+          // Occasional holographic ghost-flicker
+          '  float ghost = step(0.985, sin(u_time * 0.7) * sin(u_time * 5.3));',
+          '  col *= 1.0 - ghost * 0.25;',
+          '  gl_FragColor = vec4(col, u_intensity);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
       });
 
-      // scan ring pulses
-      if (scanRing) {
-        const phase = (t * 0.3) % 1.0;
-        const s = 1 + phase * 7;
-        scanRing.scale.set(s, s, 1);
-        scanRing.material.opacity = (1 - phase) * 0.25 * uniforms.u_density.value;
-        scanRing.rotation.z += dt * 0.3;
-      }
-
-      // gentle camera parallax based on cursor
-      if (cursorWorld) {
-        camera.position.x += (cursorWorld.x * 1.2 - camera.position.x) * 0.04;
-        camera.position.y += (cursorWorld.y * 1.0 - camera.position.y) * 0.04;
-        camera.lookAt(0, 0, 0);
-      }
-
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      // Smaller plane than before — designed to be parented to the camera and live as
+      // a left-half HUD overlay rather than a world-space billboard.
+      const geo = new THREE.PlaneGeometry(4.5, 2.25);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.userData = { tex };
+      return mesh;
     }
 
-    function onResize() {
-      if (!renderer) return;
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+    // ============== Scene 4 — Calmed-city traffic ==============
+    // Bright green streamers near street level, drifting horizontally in two
+    // directions. Reads as distant cars threading the streets between the towers.
+    // Each particle wraps its x position via mod(), so the flow is endless without
+    // a respawn loop. Visibility + brightness driven by bg.calmIntensity.
+    function buildTraffic() {
+      const N = 110;
+      const positions = new Float32Array(N * 3);
+      const seeds     = new Float32Array(N);
+      const dirs      = new Float32Array(N);   // -1 or +1: lane direction
+      const speeds    = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        positions[i*3]   = (Math.random() - 0.5) * 320;     // origin x (wrapped each frame)
+        positions[i*3+1] = -22 + (Math.random() - 0.5) * 6; // street strip
+        positions[i*3+2] = -200 + (Math.random() - 0.5) * 80;
+        seeds[i]  = Math.random() * 6.2832;
+        dirs[i]   = Math.random() < 0.5 ? -1 : 1;
+        speeds[i] = 3.5 + Math.random() * 5.5;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('aSeed',    new THREE.BufferAttribute(seeds, 1));
+      geo.setAttribute('aDir',     new THREE.BufferAttribute(dirs, 1));
+      geo.setAttribute('aSpeed',   new THREE.BufferAttribute(speeds, 1));
+      const mat = new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 0 } },
+        vertexShader: [
+          'uniform float u_time;',
+          'attribute float aSeed;',
+          'attribute float aDir;',
+          'attribute float aSpeed;',
+          'varying float vTwinkle;',
+          'void main() {',
+          '  vec3 pos = position;',
+          // wrap-around horizontal drift: each car threads a street, no respawn needed
+          '  float w = 320.0;',
+          '  float x = mod(position.x + aDir * u_time * aSpeed + 0.5 * w, w) - 0.5 * w;',
+          '  pos.x = x;',
+          '  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);',
+          '  float depth = clamp(-mvPos.z, 1.0, 320.0);',
+          // small bright points — they read as glints, not full lights
+          '  gl_PointSize = (320.0 / depth);',
+          '  gl_Position = projectionMatrix * mvPos;',
+          '  vTwinkle = 0.70 + 0.30 * sin(u_time * 2.0 + aSeed * 7.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_intensity;',
+          'varying float vTwinkle;',
+          'void main() {',
+          '  vec2 uv = gl_PointCoord - 0.5;',
+          '  float d = length(uv);',
+          '  float a = smoothstep(0.5, 0.0, d);',
+          '  vec3 green = vec3(0.35, 1.00, 0.58);',
+          '  gl_FragColor = vec4(green, a * vTwinkle * u_intensity * 0.85);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      return new THREE.Points(geo, mat);
+    }
+
+    // Slow drifting motes — dust in lamp light. Far slower than the storm.
+    function buildWorkshopMotes() {
+      const N = 220;
+      const positions = new Float32Array(N * 3);
+      const seeds     = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        positions[i*3]   = (Math.random() - 0.5) * 60;
+        positions[i*3+1] = (Math.random() - 0.5) * 36;
+        positions[i*3+2] = (Math.random() - 0.5) * 50;
+        seeds[i] = Math.random() * 6.2832;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('aSeed',    new THREE.BufferAttribute(seeds, 1));
+      const mat = new THREE.ShaderMaterial({
+        uniforms: { u_time: { value: 0 }, u_intensity: { value: 0 } },
+        vertexShader: [
+          'uniform float u_time;',
+          'attribute float aSeed;',
+          'varying float vTwinkle;',
+          'void main() {',
+          '  vec3 pos = position;',
+          // very slow drift — dust hanging in warm light
+          '  pos.y += sin(u_time * 0.20 + aSeed * 3.14) * 0.6;',
+          '  pos.x += sin(u_time * 0.15 + aSeed * 5.27) * 1.0;',
+          '  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);',
+          '  float depth = clamp(-mvPos.z, 1.0, 110.0);',
+          '  gl_PointSize = (160.0 / depth);',
+          '  gl_Position = projectionMatrix * mvPos;',
+          '  vTwinkle = 0.45 + 0.55 * sin(u_time * 0.8 + aSeed * 9.0);',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform float u_intensity;',
+          'varying float vTwinkle;',
+          'void main() {',
+          '  vec2 uv = gl_PointCoord - 0.5;',
+          '  float d = length(uv);',
+          '  float a = smoothstep(0.5, 0.0, d);',
+          '  vec3 amber = vec3(1.0, 0.69, 0.23);',
+          '  gl_FragColor = vec4(amber, a * vTwinkle * u_intensity * 0.7);',
+          '}'
+        ].join('\n'),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      return new THREE.Points(geo, mat);
+    }
+
+    // ============== Scene 5 — Alpine horizon ridge ==============
+    // The one nod to local geography (Werdenberg / Liechtenstein / Rhine valley).
+    // A single jagged silhouette built from summed sines (deterministic — same ridge
+    // each load), placed deeper than the skyline so it reads as far-distance horizon.
+    // Two LineSegments stacked at slight z offsets give the ridge a subtle parallax
+    // depth without literal mountain illustration.
+    function _alpineRidgePoints(zPlane, yLift, jagScale) {
+      const N = 220;
+      const xMin = -380, xMax = 380;
+      const positions = [];
+      let prevX = 0, prevY = 0;
+      for (let i = 0; i < N; i++) {
+        const t = i / (N - 1);
+        const x = xMin + t * (xMax - xMin);
+        // layered sines = low-frequency big peaks + mid/high jaggies
+        const phase = t * 18.0;
+        let y =
+            Math.sin(phase * 0.34 + 0.7) * 5.2
+          + Math.sin(phase * 0.83 + 2.1) * 3.1
+          + Math.sin(phase * 1.71 + 1.3) * 1.7
+          + Math.sin(phase * 3.97 + 5.0) * 0.7;
+        y = (y * jagScale) + yLift;
+        if (i > 0) positions.push(prevX, prevY, zPlane, x, y, zPlane);
+        prevX = x; prevY = y;
+      }
+      return positions;
+    }
+    function buildAlpineRidge() {
+      const group = new THREE.Group();
+      // back ridge (further, slightly higher, fainter)
+      const backPts = _alpineRidgePoints(-360, 14, 1.0);
+      // front ridge (closer, lower, slightly stronger — gives depth without parallax math)
+      const frontPts = _alpineRidgePoints(-320,  6, 1.2);
+      function makeLine(points, alphaMul) {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+        const mat = new THREE.ShaderMaterial({
+          uniforms: {
+            u_time:      { value: 0 },
+            u_intensity: { value: 0 },
+            u_alpha:     { value: alphaMul }
+          },
+          vertexShader: [
+            'void main() {',
+            '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+            '}'
+          ].join('\n'),
+          fragmentShader: [
+            'uniform float u_time;',
+            'uniform float u_intensity;',
+            'uniform float u_alpha;',
+            'void main() {',
+            '  vec3 green = vec3(0.30, 1.00, 0.55);',
+            '  float breath = 0.85 + 0.15 * sin(u_time * 0.4);',
+            '  gl_FragColor = vec4(green * breath, u_alpha * u_intensity);',
+            '}'
+          ].join('\n'),
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+        return new THREE.LineSegments(geo, mat);
+      }
+      const back  = makeLine(backPts,  0.28);
+      const front = makeLine(frontPts, 0.38);
+      group.add(back);
+      group.add(front);
+      group.userData = { back, front };
+      return group;
+    }
+
+    function initBg() {
+      if (typeof THREE === 'undefined') { setTimeout(initBg, 50); return; }
+      const canvas = bgCanvasEl;
+      if (!canvas) return;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.setSize(window.innerWidth, window.innerHeight, false);
-    }
-    window.addEventListener('resize', onResize);
+      renderer.setClearColor(0x000000, 0);
 
-    // cursor in world coords (rough)
-    window.addEventListener('mousemove', (e) => {
-      const nx = (e.clientX / window.innerWidth) * 2 - 1;
-      const ny = -((e.clientY / window.innerHeight) * 2 - 1);
-      cursorWorld.x = nx * 12;
-      cursorWorld.y = ny * 8;
-      if (uniforms.u_cursor.value) uniforms.u_cursor.value.set(cursorWorld.x, cursorWorld.y);
-    });
+      const scene  = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 800);
+      camera.position.set(0, CAMERA_KEYS[0].y, CAMERA_KEYS[0].z);
+      camera.rotation.x = CAMERA_KEYS[0].rotX;
 
-    // pause when tab hidden
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden && renderer) {
-        // do nothing — rAF naturally pauses when tab hidden
+      // Far backdrop: subtle fog plane + distant fragmenting wireframe skyline.
+      // Both stay visible across all scenes — they're the world the camera lives in.
+      const fog = buildFog();
+      fog.position.set(0, 0, -230);   // deepest layer
+      scene.add(fog);
+
+      const skyline = buildSkyline();
+      scene.add(skyline);
+
+      const storm = buildStorm();
+      scene.add(storm);
+
+      // --- Four lanes (rivers of light behind the leistungen cards) ---
+      const lanes = LANE_AXES.map((a, i) => {
+        const m = new THREE.Mesh(buildLaneGeo(), buildLaneMaterial(LANE_COLORS[i]));
+        m.position.set(a.x, a.y, -90);     // centered in the storm volume
+        scene.add(m);
+        return m;
+      });
+
+      // --- Threats: 3 InstancedMesh groups. Each instance gets per-frame motion. ---
+      const tmpObj = new THREE.Object3D();
+      function spawnThreat(d, cameraZ, opts) {
+        d.pos.set(
+          (Math.random() - 0.5) * opts.spread.x,
+          (Math.random() - 0.5) * opts.spread.y,
+          cameraZ + (-200 + (Math.random() - 0.5) * 30)
+        );
+        d.rotation.set(
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2
+        );
+        // Threat → lane is fixed per type, not random:
+        //   phishing hooks       → lane 0 (red)
+        //   fake-login windows   → lane 2 (blue)
+        //   BSOD shards          → lane 2 (blue)
+        // As u_order rises, position lerps from chaos pos toward (targetX, targetY).
+        d.lane    = opts.lane;
+        d.targetX = LANE_AXES[opts.lane].x;
+        d.targetY = LANE_AXES[opts.lane].y;
       }
-    });
+      function buildThreatGroup(geo, mat, count, opts) {
+        const inst = new THREE.InstancedMesh(geo, mat, count);
+        inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        inst.frustumCulled = false;  // threats can pass close to the lens
+        const data = [];
+        for (let i = 0; i < count; i++) {
+          const d = {
+            pos: new THREE.Vector3(),
+            rotation: new THREE.Euler(),
+            rotV: new THREE.Vector3(
+              (Math.random() - 0.5) * opts.rotSpeed,
+              (Math.random() - 0.5) * opts.rotSpeed,
+              (Math.random() - 0.5) * opts.rotSpeed
+            ),
+            velZ: opts.velMin + Math.random() * (opts.velMax - opts.velMin),
+            scale: opts.scaleMin + Math.random() * (opts.scaleMax - opts.scaleMin)
+          };
+          spawnThreat(d, camera.position.z, opts);
+          data.push(d);
+          tmpObj.position.copy(d.pos);
+          tmpObj.rotation.copy(d.rotation);
+          tmpObj.scale.setScalar(d.scale);
+          tmpObj.updateMatrix();
+          inst.setMatrixAt(i, tmpObj.matrix);
+        }
+        inst.instanceMatrix.needsUpdate = true;
+        scene.add(inst);
+        return { inst, data, opts };
+      }
+      // lane: 0=red, 1=pink, 2=blue, 3=green
+      const hooks = buildThreatGroup(
+        buildHookGeo(), buildHookMaterial(), HOOK_COUNT,
+        { lane: 0, rotSpeed: 0.55, velMin:  8, velMax: 22, scaleMin: 0.8, scaleMax: 1.7, spread: { x: 80, y: 50 } }
+      );
+      const fakeWins = buildThreatGroup(
+        buildFakeWindowGeo(), buildFakeWindowMaterial(), FAKEWIN_COUNT,
+        { lane: 1, rotSpeed: 0.35, velMin:  5, velMax: 13, scaleMin: 0.6, scaleMax: 1.3, spread: { x: 70, y: 38 } }
+      );
+      const bsods = buildThreatGroup(
+        buildBsodGeo(), buildBsodMaterial(), BSOD_COUNT,
+        { lane: 2, rotSpeed: 1.00, velMin: 11, velMax: 30, scaleMin: 0.5, scaleMax: 1.3, spread: { x: 92, y: 55 } }
+      );
+      const dbs = buildThreatGroup(
+        buildDatabaseGeo(), buildDatabaseMaterial(), DB_COUNT,
+        { lane: 3, rotSpeed: 0.50, velMin:  7, velMax: 18, scaleMin: 1.0, scaleMax: 1.8, spread: { x: 80, y: 45 } }
+      );
 
-    /* ---------- init three.js when DOM ready ---------- */
-    function tryInit() {
-      if (typeof THREE === 'undefined' || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-        setTimeout(tryInit, 50);
+      // --- Workshop (scene 3): implied amber-lit room ---
+      // Camera at the ueber transition lands roughly at world (0, 14, -10..-25).
+      // We place workshop elements where the tilted-up view will see them clearly.
+      const workshopGroup = new THREE.Group();
+
+      const lampHalo = buildLampHalo();
+      lampHalo.position.set(9, 18, -26);   // upper-right of frame, mid-distance
+      workshopGroup.add(lampHalo);
+
+      // Terminal — holographic floating screen. Parented to the camera so it lives
+      // as a left-half HUD overlay anchored to the viewport (no clipping as the
+      // camera dollies through the ueber transition). Workshop is implied by what's
+      // on the screen — Robin repairing a data structure.
+      const terminal = buildTerminal();
+      terminal.position.set(-1.5, 0.4, -6);    // camera-local: left of center, slightly above, 6 in front
+      terminal.visible = false;
+      camera.add(terminal);
+      // camera must be in the scene graph for its children to render
+      scene.add(camera);
+
+      const motes = buildWorkshopMotes();
+      motes.position.set(0, 14, -25);      // distributed in the workshop volume
+      workshopGroup.add(motes);
+
+      scene.add(workshopGroup);
+
+      // --- Scene 4 — calmed-city traffic glints ---
+      const traffic = buildTraffic();
+      scene.add(traffic);
+
+      // --- Scene 5 — alpine horizon ridge ---
+      const alpine = buildAlpineRidge();
+      scene.add(alpine);
+
+      bg.renderer = renderer;
+      bg.scene    = scene;
+      bg.camera   = camera;
+      bg.fog      = fog;
+      bg.skyline  = skyline;
+      bg.storm    = storm;
+      bg.lanes    = lanes;
+      bg.threats  = [hooks, fakeWins, bsods, dbs];
+      bg.workshop = { group: workshopGroup, lampHalo, terminal, motes };
+      bg.traffic  = traffic;
+      bg.alpine   = alpine;
+
+      function onResize() {
+        if (bg.destroyed) return;
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      }
+      window.addEventListener('resize', onResize);
+
+      const themeObserver = new MutationObserver(() => {
+        // Scene 1 palette is fixed red/magenta in both themes; theme-aware
+        // tweaks will land when scenes 2-5 come online.
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+      window.addEventListener('beforeunload', () => {
+        bg.destroyed = true;
+        if (bg.raf) cancelAnimationFrame(bg.raf);
+        fog.geometry.dispose();    fog.material.dispose();
+        bg.skyline.children.forEach(t => { t.geometry.dispose(); t.material.dispose(); });
+        storm.geometry.dispose();  storm.material.dispose();
+        bg.lanes.forEach(m => { m.geometry.dispose(); m.material.dispose(); });
+        bg.threats.forEach(g => { g.inst.geometry.dispose(); g.inst.material.dispose(); });
+        // Workshop: dispose lamp halo (core + halo plane), terminal (geo/mat/tex), motes
+        const { core, halo } = bg.workshop.lampHalo.userData;
+        core.geometry.dispose(); core.material.dispose();
+        halo.geometry.dispose(); halo.material.dispose();
+        bg.workshop.terminal.geometry.dispose();
+        bg.workshop.terminal.material.dispose();
+        bg.workshop.terminal.userData.tex.dispose();
+        bg.workshop.motes.geometry.dispose(); bg.workshop.motes.material.dispose();
+        renderer.dispose();
+        themeObserver.disconnect();
+      });
+
+      function updateThreatGroup(g, dt, cameraZ) {
+        const { inst, data, opts } = g;
+        inst.material.uniforms.u_time.value      = bg.time;
+        inst.material.uniforms.u_intensity.value = bg.stormIntensity;
+        inst.material.uniforms.u_order.value     = bg.stormOrder;
+        // smoothstep-eased order for the position lerp into the lane
+        const o      = bg.stormOrder;
+        const orderS = o * o * (3.0 - 2.0 * o);
+        // tumble calms as the threat aligns with its lane
+        const tumble = 1.0 - orderS * 0.85;
+        for (let i = 0; i < data.length; i++) {
+          const d = data[i];
+          d.pos.z      += d.velZ   * dt;
+          d.rotation.x += d.rotV.x * dt * tumble;
+          d.rotation.y += d.rotV.y * dt * tumble;
+          d.rotation.z += d.rotV.z * dt * tumble;
+          if (d.pos.z > cameraZ + 8) {
+            spawnThreat(d, cameraZ, opts);
+            d.velZ = opts.velMin + Math.random() * (opts.velMax - opts.velMin);
+          }
+          // chaos pos → lane axis as order climbs
+          const rx = d.pos.x + (d.targetX - d.pos.x) * orderS;
+          const ry = d.pos.y + (d.targetY - d.pos.y) * orderS;
+          tmpObj.position.set(rx, ry, d.pos.z);
+          tmpObj.rotation.copy(d.rotation);
+          tmpObj.scale.setScalar(d.scale);
+          tmpObj.updateMatrix();
+          inst.setMatrixAt(i, tmpObj.matrix);
+        }
+        inst.instanceMatrix.needsUpdate = true;
+      }
+
+      bg.startT = performance.now() * 0.001;
+      bg.lastT  = bg.startT;
+
+      function loop() {
+        if (bg.destroyed) return;
+        const now = performance.now() * 0.001;
+        const dt  = Math.min(0.05, Math.max(0, now - bg.lastT));
+        bg.lastT  = now;
+        bg.time   = now - bg.startT;
+
+        // smooth the camera toward target — gives the dolly + tilt cinematic ease
+        camera.position.z += (bg.camTarget.z    - camera.position.z) * 0.15;
+        camera.position.y += (bg.camTarget.y    - camera.position.y) * 0.15;
+        camera.rotation.x += (bg.camTarget.rotX - camera.rotation.x) * 0.15;
+
+        // backdrop: fog + skyline tick each frame (they persist across all scenes)
+        fog.material.uniforms.u_time.value  = bg.time;
+        fog.material.uniforms.u_order.value = bg.stormOrder;
+        fog.material.uniforms.u_calm.value  = bg.calmIntensity;
+        skyline.children.forEach(t => {
+          t.material.uniforms.u_time.value  = bg.time;
+          t.material.uniforms.u_order.value = bg.stormOrder;
+          t.material.uniforms.u_calm.value  = bg.calmIntensity;
+        });
+
+        // storm uniforms each frame
+        storm.material.uniforms.u_time.value      = bg.time;
+        storm.material.uniforms.u_cameraZ.value   = camera.position.z;
+        storm.material.uniforms.u_intensity.value = bg.stormIntensity;
+        storm.material.uniforms.u_order.value     = bg.stormOrder;
+        storm.visible = bg.stormIntensity > 0.005;
+
+        // lanes — visible only when order has begun to form. Strength = intensity * f(order).
+        const laneStrength = bg.stormIntensity * Math.min(1, Math.max(0, bg.stormOrder * 1.4));
+        bg.lanes.forEach(m => {
+          m.material.uniforms.u_time.value      = bg.time;
+          m.material.uniforms.u_intensity.value = laneStrength;
+          m.visible = laneStrength > 0.01;
+        });
+
+        // threats — animate while the storm is alive, hide entirely otherwise
+        const alive = bg.stormIntensity > 0.005;
+        bg.threats.forEach(g => {
+          g.inst.visible = alive;
+          if (alive) updateThreatGroup(g, dt, camera.position.z);
+        });
+
+        // workshop (scene 3 amber room) — visibility + uniforms tied to workshopIntensity
+        const wI = bg.workshopIntensity;
+        const wsAlive = wI > 0.01;
+        bg.workshop.group.visible    = wsAlive;
+        bg.workshop.terminal.visible = wsAlive;   // camera-parented, toggled independently
+        if (wsAlive) {
+          const { core, halo } = bg.workshop.lampHalo.userData;
+          core.material.uniforms.u_time.value      = bg.time;
+          core.material.uniforms.u_intensity.value = wI;
+          halo.material.uniforms.u_time.value      = bg.time;
+          halo.material.uniforms.u_intensity.value = wI;
+          // billboard the halo plane toward the camera so the glow always reads soft
+          halo.quaternion.copy(camera.quaternion);
+          bg.workshop.terminal.material.uniforms.u_time.value      = bg.time;
+          bg.workshop.terminal.material.uniforms.u_intensity.value = wI;
+          bg.workshop.motes.material.uniforms.u_time.value         = bg.time;
+          bg.workshop.motes.material.uniforms.u_intensity.value    = wI;
+        }
+
+        // scene 4 — calmed-city traffic glints (street-level drift between towers)
+        const cI = bg.calmIntensity;
+        const trafficAlive = cI > 0.01;
+        bg.traffic.visible = trafficAlive;
+        if (trafficAlive) {
+          bg.traffic.material.uniforms.u_time.value      = bg.time;
+          bg.traffic.material.uniforms.u_intensity.value = cI;
+        }
+
+        // scene 5 — alpine horizon ridge (held shot for kontakt)
+        const hI = bg.horizonIntensity;
+        const ridgeAlive = hI > 0.01;
+        bg.alpine.visible = ridgeAlive;
+        if (ridgeAlive) {
+          const { back, front } = bg.alpine.userData;
+          back.material.uniforms.u_time.value       = bg.time;
+          back.material.uniforms.u_intensity.value  = hI;
+          front.material.uniforms.u_time.value      = bg.time;
+          front.material.uniforms.u_intensity.value = hI;
+        }
+
+        renderer.render(scene, camera);
+        bg.raf = requestAnimationFrame(loop);
+      }
+      loop();
+
+      return true;
+    }
+
+    function setupBgTimeline() {
+      if (motionReduced) {
+        // freeze camera at hero start; storm still renders so the visitor sees the world.
+        bg.camTarget = { z: CAMERA_KEYS[0].z, y: CAMERA_KEYS[0].y, rotX: CAMERA_KEYS[0].rotX };
+        bg.stormIntensity    = 1.0;
+        bg.stormOrder        = 0.0;
+        bg.workshopIntensity = 0.0;
+        updateBgDebug();
         return;
       }
-      if (motionReduced) return;
-      const ok = initThree();
-      if (ok) setupScrollTimeline();
-    }
-    tryInit();
-
-    /* ============================================================
-       SCROLL TIMELINE — GSAP ScrollTrigger
-       Drives uniforms across the whole page scroll.
-       ============================================================ */
-    function setupScrollTimeline() {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        setTimeout(setupBgTimeline, 50);
+        return;
+      }
       gsap.registerPlugin(ScrollTrigger);
 
-      const edgeTint = $('#edgeTint');
-
-      // master timeline scrubs with page scroll
-      const tl = gsap.timeline({
+      gsap.timeline({
         scrollTrigger: {
           trigger: 'body',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.6
-        }
-      });
-
-      // Phase 0: hero — chaotic, reddish, dim
-      // Phase 1: leistungen — calming, less red
-      // Phase 2: ueber — investigative, blue accent
-      // Phase 3: preise — neutral green building
-      // Phase 4: faq — bright green ramping
-      // Phase 5: kontakt — fully green + locked
-
-      // 0 -> 0.18 (hero -> leistungen)
-      tl.to(uniforms.u_chaos,      { value: 0.85 }, 0)
-        .to(uniforms.u_redMix,     { value: 0.55 }, 0)
-        .to(uniforms.u_brightness, { value: 0.45 }, 0);
-
-      tl.to(uniforms.u_chaos,      { value: 0.55 }, 0.18)
-        .to(uniforms.u_redMix,     { value: 0.30 }, 0.18)
-        .to(uniforms.u_brightness, { value: 0.55 }, 0.18);
-
-      // 0.18 -> 0.4 (leistungen -> ueber)
-      tl.to(uniforms.u_chaos,      { value: 0.35 }, 0.40)
-        .to(uniforms.u_redMix,     { value: 0.10 }, 0.40)
-        .to(uniforms.u_brightness, { value: 0.65 }, 0.40)
-        .add(() => setSceneColor(0x2bd5ff), 0.30); // investigative blue tint
-
-      // 0.4 -> 0.6 (ueber -> preise)
-      tl.add(() => setSceneColor(0x39ff7a), 0.55)
-        .to(uniforms.u_chaos,      { value: 0.20 }, 0.60)
-        .to(uniforms.u_redMix,     { value: 0.00 }, 0.60)
-        .to(uniforms.u_brightness, { value: 0.80 }, 0.60);
-
-      // 0.6 -> 0.85 (preise -> faq)
-      tl.to(uniforms.u_chaos,      { value: 0.08 }, 0.85)
-        .to(uniforms.u_brightness, { value: 0.95 }, 0.85);
-
-      // 0.85 -> 1 (faq -> kontakt: full green field)
-      tl.to(uniforms.u_chaos,      { value: 0.00 }, 1.00)
-        .to(uniforms.u_brightness, { value: 1.20 }, 1.00)
-        .to(uniforms.u_density,    { value: 0.50 }, 1.00); // particles thin out as we settle
-
-      // edge red tint on hero only
-      gsap.fromTo(edgeTint, { opacity: 0.55 }, {
-        opacity: 0,
-        scrollTrigger: {
-          trigger: '#hero',
-          start: 'top top',
-          end: 'bottom 30%',
-          scrub: 0.4
-        }
-      });
-
-      // kontakt green-field intensity ramps in
-      gsap.to(document.documentElement, {
-        '--kontakt-glow': 0.85,
-        scrollTrigger: {
-          trigger: '#kontakt',
-          start: 'top 80%',
-          end: 'top 20%',
-          scrub: 0.4
-        }
-      });
-
-      // HUD secure-bar grows with scroll
-      gsap.to(document.documentElement, {
-        '--secure': '95%',
-        scrollTrigger: {
-          trigger: 'body',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.5
+          start:   'top top',
+          end:     'bottom bottom',
+          scrub:   0.6,
+          onUpdate: (self) => {
+            bg.progress = self.progress;
+            const cam = _bgInterpCam(self.progress);
+            bg.camTarget.z    = cam.z;
+            bg.camTarget.y    = cam.y;
+            bg.camTarget.rotX = cam.rotX;
+            bg.stormIntensity    = _bgInterpStorm(self.progress);
+            bg.stormOrder        = _bgInterpOrder(self.progress);
+            bg.workshopIntensity = _bgInterpWorkshop(self.progress);
+            updateBgDebug();
+          }
         }
       });
     }
+
+    // The current section is the one whose top is nearest the viewport center.
+    function _currentSectionId() {
+      const cy = window.innerHeight * 0.4;
+      let best = SECTION_IDS[0], bestD = Infinity;
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        const d = Math.abs(r.top - cy);
+        if (d < bestD) { bestD = d; best = id; }
+      }
+      return best;
+    }
+
+    const _dbg = {
+      section:  $('#bgDbgSection'),
+      progress: $('#bgDbgProgress'),
+      z:        $('#bgDbgZ'),
+      y:        $('#bgDbgY'),
+      tilt:     $('#bgDbgTilt'),
+      storm:    $('#bgDbgStorm'),
+      order:    $('#bgDbgOrder'),
+      workshop: $('#bgDbgWorkshop')
+    };
+    function updateBgDebug() {
+      const id = _currentSectionId();
+      bg.currentSectionId = id;
+      if (_dbg.section)  _dbg.section.textContent  = id;
+      if (_dbg.progress) _dbg.progress.textContent = bg.progress.toFixed(2);
+      if (_dbg.z)        _dbg.z.textContent        = bg.camTarget.z.toFixed(1);
+      if (_dbg.y)        _dbg.y.textContent        = bg.camTarget.y.toFixed(1);
+      if (_dbg.tilt)     _dbg.tilt.textContent     = bg.camTarget.rotX.toFixed(2);
+      if (_dbg.storm)    _dbg.storm.textContent    = bg.stormIntensity.toFixed(2);
+      if (_dbg.order)    _dbg.order.textContent    = bg.stormOrder.toFixed(2);
+      if (_dbg.workshop) _dbg.workshop.textContent = bg.workshopIntensity.toFixed(2);
+    }
+    window.addEventListener('scroll', () => { updateBgDebug(); }, { passive: true });
+
+    // boot
+    initBg();
+    setupBgTimeline();
+    updateBgDebug();
 
     /* ---------- wordmark micro-jitter ---------- */
     const wordmark = $('#wordmark');
@@ -2859,7 +3512,7 @@ You took the green pill. The system is yours now.
     $('#year').textContent = new Date().getFullYear();
     $('#impressumLink').addEventListener('click', (e) => {
       e.preventDefault();
-      alert('Impressum folgt — Platzhalter.\n\nRobin Gysin · RHIIT\n+41 79 533 01 51 · info@rhiit.ch\nWerdenberg, Schweiz');
+      alert('Impressum\n\nRobin Gysin · RHIIT\nBadstrasse 45\n9475 Sevelen, Schweiz\n\n+41 79 533 01 51 · info@rhiit.ch\n');
     });
 
     /* ---------- toast ---------- */
@@ -2909,402 +3562,9 @@ You took the green pill. The system is yours now.
       });
     });
 
-    /* ============================================================
-       DATA STREAM CANVAS — hex / binary / code / network log lines
-       Layered above three.js bgCanvas, below content.
-       ============================================================ */
-    const streamCanvas = $('#streamCanvas');
-    const sctx = streamCanvas ? streamCanvas.getContext('2d') : null;
-    const streamPool = {
-      hex:  ['0xDEADBEEF', '0x4A6F686E', '0xFEEDFACE', '0xCAFEBABE', '0xBADC0FFE',
-             '0x4624', '0x4625', '0x4672', '0x80070005', '0x0F1A22BC',
-             '0xC001D00D', '0x1337BABE'],
-      bin:  ['01001000 01101001', '11010101 01001110', '10101010 11001100',
-             '00110011 01010101', '11110000 00001111', '01010111 00010011',
-             '10010110 11100100'],
-      code: ['Get-EventLog', 'cert.verify()', 'if (secure) {', 'Invoke-Restore',
-             'Set-Lock -State sealed', 'Get-MpThreatDetection', 'scan(host)',
-             'decrypt(payload)', 'audit.log()', 'firewall.deny(ip)',
-             'Backup-Verify()', 'Restore-Computer', 'Get-Process | Where', 'sha256(file)'],
-      net:  ['GET /api/auth 200', '[+] handshake ok', 'tcp/443 verified',
-             'DENY 192.168.1.42', '[ok] backup sync 100%',
-             'scan host=10.0.0.5 [open]', 'TLS 1.3 negotiated',
-             'dns: lookup ok', 'icmp echo 64 bytes', '[+] cert valid 398d']
-    };
-    const streamTypes = ['hex', 'bin', 'code', 'net'];
-    const scenePalettes = {
-      1: [[255, 74, 91],   [255, 191, 60]],   // Scene 1 (hero):    red + yellow
-      2: [[43, 213, 255],  [255, 191, 60]],   // Scene 2 (middle):  blue + yellow
-      3: [[57, 255, 122],  [43, 213, 255]]    // Scene 3 (kontakt): green + blue
-    };
-    let currentScene = 1;
-    function updateCurrentScene() {
-      const _l = document.getElementById('leistungen');
-      const _k = document.getElementById('kontakt');
-      if (!_l || !_k) { currentScene = 1; return; }
-      const vh = window.innerHeight;
-      const lTop = _l.getBoundingClientRect().top;
-      const kTop = _k.getBoundingClientRect().top;
-      if (lTop > vh * 0.55) currentScene = 1;
-      else if (kTop < vh * 0.55) currentScene = 3;
-      else currentScene = 2;
-    }
-    window.addEventListener('scroll', updateCurrentScene, { passive: true });
-    updateCurrentScene();
-    const streamLines = [];
 
-    function resizeStream() {
-      if (!streamCanvas) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-      streamCanvas.width = window.innerWidth * dpr;
-      streamCanvas.height = window.innerHeight * dpr;
-      sctx.setTransform(1, 0, 0, 1, 0, 0);
-      sctx.scale(dpr, dpr);
-      sctx.font = '12px "JetBrains Mono", ui-monospace, monospace';
-    }
 
-    function spawnLine(initialY) {
-      const type = streamTypes[Math.floor(Math.random() * streamTypes.length)];
-      const pool = streamPool[type];
-      streamLines.push({
-        text:     pool[Math.floor(Math.random() * pool.length)],
-        type:     type,
-        colorIdx: Math.random() < 0.5 ? 0 : 1,
-        x:        Math.random() * window.innerWidth,
-        y:        initialY != null ? initialY : -20,
-        speed:    0.35 + Math.random() * 1.2,
-        alpha:    0.55 + Math.random() * 0.35
-      });
-    }
 
-    function drawStream() {
-      if (!streamCanvas || motionReduced) return;
-      const w = window.innerWidth, h = window.innerHeight;
-      sctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
-      sctx.globalCompositeOperation = 'destination-out';
-      sctx.fillRect(0, 0, w, h);
-      sctx.globalCompositeOperation = 'source-over';
-
-      const chaos  = (uniforms && uniforms.u_chaos)      ? uniforms.u_chaos.value      : 0.5;
-      const bright = (uniforms && uniforms.u_brightness) ? uniforms.u_brightness.value : 0.6;
-
-      // sparse density per user feedback (dimmer + fewer streams)
-      const spawnRate = 0.08 + chaos * 0.10;
-      if (Math.random() < spawnRate) spawnLine();
-
-      for (let i = 0; i < streamLines.length; i++) {
-        const L = streamLines[i];
-        L.y += L.speed * (1 + chaos * 0.3);
-        const palette = scenePalettes[currentScene] || scenePalettes[1];
-        const c = palette[L.colorIdx];
-        sctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (L.alpha * (0.5 + bright * 0.6)) + ')';
-        sctx.fillText(L.text, L.x, L.y);
-        if (L.y > h + 20) { streamLines.splice(i--, 1); }
-      }
-
-      requestAnimationFrame(drawStream);
-    }
-
-    if (streamCanvas && !motionReduced) {
-      resizeStream();
-      // seed with a small amount of lines already on screen
-      for (let i = 0; i < 14; i++) spawnLine(Math.random() * window.innerHeight);
-      drawStream();
-      window.addEventListener('resize', resizeStream);
-    }
-
-    /* ============================================================
-       SCENE 1 — Hero popup cycling (+ phishing card cycle)
-       Errors stay 5-8s. Phishing email cycles in/out same way.
-       ============================================================ */
-    const popupSlots = $$('.popup');
-    const popupContent = [
-      { title: '! SYSTEM-WARNUNG',       body: '<strong>32 Viren entdeckt.</strong> Klicke hier, um deinen Computer sofort zu reinigen.' },
-      { title: '! KRITISCHER FEHLER',    body: '<strong>Festplatte beschädigt.</strong> Bei Neustart gehen alle Daten verloren.' },
-      { title: '! WINDOWS DEFENDER',     body: '<strong>Lizenz abgelaufen.</strong> Sofort verlängern, sonst keine Updates.' },
-      { title: '! ALERT 0x80070005',     body: '<strong>Unbekannter Zugriff.</strong> Ein Gerät aus dem Ausland versucht, sich zu verbinden.' },
-      { title: '! REGISTRY CRITICAL',    body: '<strong>3.482 Probleme gefunden.</strong> Sofort beheben.' },
-      { title: '! ZERTIFIKAT-FEHLER',    body: '<strong>Verbindung unsicher.</strong> Browser hat ein abgelaufenes Zertifikat erkannt.' },
-      { title: '! IHR PC IST INFIZIERT', body: '<strong>5 Trojaner aktiv.</strong> Sofortige Reinigung erforderlich, sonst Datenverlust.' },
-      { title: '! BROWSER VERALTET',     body: '<strong>Update jetzt erforderlich.</strong> Klicke, um deinen Browser zu aktualisieren.' },
-      { title: '! KRYPTO-MINER',         body: '<strong>Verdächtiger Prozess.</strong> Hohe CPU-Auslastung — möglicher Bitcoin-Miner.' },
-      { title: '! BACKUP FEHLGESCHLAGEN',body: '<strong>Letztes Backup vor 412 Tagen.</strong> Jetzt sichern, sonst riskierst du alles.' },
-      { title: '! RANSOMWARE WARNUNG',   body: '<strong>Dateien verschlüsselt?</strong> Klicke hier für den Entschlüsselungs-Code.' },
-      { title: '! TRACKER ERKANNT',      body: '<strong>847 Tracker aktiv.</strong> Deine Privatsphäre ist gefährdet.' },
-      { title: '! FLASH PLAYER UPDATE',  body: '<strong>Dringend.</strong> Adobe Flash Player veraltet — sofortiges Update nötig.' },
-      { title: '! ADMIN PASSWORT LEAK',  body: '<strong>Dein Passwort wurde geleakt.</strong> Sofort ändern, sonst Account gesperrt.' }
-    ];
-    const phishContent = [
-      {
-        from: 'Post Schweiz Zustelldienst',
-        email: 'noreply@post-ch.delivery',
-        subj: 'Dein Paket wartet auf eine Zollgebühr',
-        body: 'Geehrter Kunde, dein Paket konnte nicht zugestellt werden. Bitte <a href="#">hier klicken</a>, um die Zollgebühr von <strong>CHF 2.39</strong> zu bezahlen.',
-        avatar: 'P'
-      },
-      {
-        from: 'ZKB Sicherheit',
-        email: 'security@zkb-bank.verify-now.ch',
-        subj: 'Ungewöhnliche Kontobewegung — bitte verifizieren',
-        body: 'Wir haben eine ungewöhnliche Anmeldung erkannt. <a href="#">Hier verifizieren</a>, sonst sperren wir dein E-Banking innerhalb 24h.',
-        avatar: 'Z'
-      },
-      {
-        from: 'Microsoft Support',
-        email: 'support@microsoft-helpdesk.tech',
-        subj: 'Ihre Windows-Lizenz läuft heute ab',
-        body: 'Sehr geehrter Nutzer, Ihre Windows-Lizenz wird in <strong>2 Stunden</strong> ungültig. Bitte <a href="#">jetzt aktivieren</a>, um Datenverlust zu verhindern.',
-        avatar: 'M'
-      },
-      {
-        from: 'Steuerverwaltung',
-        email: 'rueckerstattung@estv-admin.com',
-        subj: 'Sie erhalten CHF 487.30 zurück',
-        body: 'Aufgrund einer Neuberechnung steht Ihnen eine Rückerstattung zu. <a href="#">IBAN hier bestätigen</a>, um den Betrag zu erhalten.',
-        avatar: 'S'
-      },
-      {
-        from: 'PostFinance',
-        email: 'sicherheit@postfinance-ch.support',
-        subj: 'Ihr E-Banking wurde vorübergehend gesperrt',
-        body: 'Aus Sicherheitsgründen haben wir Ihren Zugang gesperrt. <a href="#">Sofort entsperren</a> mit Ihrer Karten-Nummer und PIN.',
-        avatar: 'P'
-      },
-      {
-        from: 'Apple ID',
-        email: 'noreply@apple-id-verify.com',
-        subj: '[Wichtig] Anmeldung aus China erkannt',
-        body: 'Eine neue Anmeldung an Ihrer Apple ID wurde aus <strong>Shanghai</strong> registriert. <a href="#">Hier melden</a>, falls Sie das nicht waren.',
-        avatar: 'A'
-      },
-      {
-        from: 'Amazon Kundenservice',
-        email: 'service@amazon-de.account-check.io',
-        subj: 'Bestellung #112-9384716 — Bestätigung erforderlich',
-        body: 'Eine Bestellung über <strong>CHF 1.847</strong> wurde aufgegeben. <a href="#">Stornieren</a> falls nicht von Ihnen.',
-        avatar: 'A'
-      },
-      {
-        from: 'DHL Express',
-        email: 'tracking@dhl-zustellung.ch.live',
-        subj: 'Lieferung fehlgeschlagen — Adresse bestätigen',
-        body: 'Wir konnten Sie nicht erreichen. <a href="#">Adresse hier neu eingeben</a>, um eine erneute Zustellung zu vereinbaren.',
-        avatar: 'D'
-      },
-      {
-        from: 'LinkedIn',
-        email: 'no-reply@linkedin-verify.io',
-        subj: 'Sie haben 14 neue Nachrichten',
-        body: 'Wichtige Nachrichten warten auf Sie. <a href="#">Jetzt einloggen</a>, um sie zu lesen.',
-        avatar: 'L'
-      },
-      {
-        from: 'Sunrise Support',
-        email: 'support@sunrise-konto.help',
-        subj: 'Letzte Rechnung konnte nicht eingezogen werden',
-        body: 'Bitte aktualisieren Sie Ihre <a href="#">Zahlungsdaten</a> innerhalb von 48h, sonst sperren wir Ihr Mobilfunk-Konto.',
-        avatar: 'S'
-      }
-    ];
-    const popupPositions = {
-      tl: { top: '14%',   left: '4%',  right: 'auto', bottom: 'auto' },
-      tr: { top: '9%',    right: '5%', left: 'auto',  bottom: 'auto' },
-      bl: { bottom: '24%', left: '2%', right: 'auto', top: 'auto' }
-    };
-    let popupTimer = null;
-    let phishTimer = null;
-    let popupActive = true;
-    function countActive() {
-      let n = 0;
-      popupSlots.forEach(s => { if (s.classList.contains('show')) n++; });
-      if (phishCard && phishCard.classList.contains('show')) n++;
-      return n;
-    }
-    function cyclePopups() {
-      if (!popupActive || motionReduced) return;
-      // max 2 items visible at a time
-      if (countActive() >= 2) return;
-      const idle = popupSlots.filter(s => !s.classList.contains('show'));
-      if (!idle.length) return;
-      const slot = idle[Math.floor(Math.random() * idle.length)];
-      const pos = slot.dataset.pos || 'tl';
-      const c = popupPositions[pos] || popupPositions.tl;
-      Object.entries(c).forEach(([k, v]) => slot.style[k] = v);
-      const data = popupContent[Math.floor(Math.random() * popupContent.length)];
-      slot.innerHTML =
-        '<div class="popup-bar"><span>' + data.title + ' <span class="popup-demo">DEMO</span></span><span>×</span></div>' +
-        '<div class="popup-body">' + data.body + '</div>';
-      slot.classList.add('show');
-      // visible 8-15s
-      setTimeout(() => slot.classList.remove('show'), 8000 + Math.random() * 7000);
-    }
-    const phishCard = $('#phishCard');
-    function cyclePhish() {
-      if (!popupActive || motionReduced || !phishCard) return;
-      // also respect the 1-2 visible cap
-      if (countActive() >= 2) return;
-      if (phishCard.classList.contains('show')) return;
-      const data = phishContent[Math.floor(Math.random() * phishContent.length)];
-      phishCard.innerHTML =
-        '<span class="phish-tag">// PHISHING-DEMO</span>' +
-        '<div class="phish-head">' +
-          '<div class="phish-avatar">' + data.avatar + '</div>' +
-          '<div class="phish-from">' + data.from + '<small>' + data.email + '</small></div>' +
-        '</div>' +
-        '<div class="phish-subject">' + data.subj + '</div>' +
-        '<div class="phish-body">' + data.body + '</div>';
-      phishCard.classList.add('show');
-      // visible 8-15s
-      setTimeout(() => phishCard.classList.remove('show'), 8000 + Math.random() * 7000);
-    }
-    function startPopups() {
-      if (motionReduced) return;
-      // initial wave — 2 things appearing within first few seconds
-      setTimeout(cyclePopups, 2200);
-      setTimeout(cyclePhish,  3800);
-      if (popupTimer) clearInterval(popupTimer);
-      if (phishTimer) clearInterval(phishTimer);
-      // attempt new spawns frequently; cap-check inside will skip when already at 2
-      popupTimer = setInterval(cyclePopups, 4000);
-      phishTimer = setInterval(cyclePhish,  6000);
-    }
-    function stopPopups() {
-      popupActive = false;
-      if (popupTimer) { clearInterval(popupTimer); popupTimer = null; }
-      if (phishTimer) { clearInterval(phishTimer); phishTimer = null; }
-      popupSlots.forEach(p => p.classList.remove('show'));
-      if (phishCard) phishCard.classList.remove('show');
-    }
-    startPopups();
-
-    // fade chaos overlay (and stop popups) as we leave hero
-    function updateChaosOverlay() {
-      const hero = $('#hero');
-      const overlay = $('.chaos-overlay');
-      if (!hero || !overlay) return;
-      const rect = hero.getBoundingClientRect();
-      const past = -rect.top;
-      const out = Math.min(1, Math.max(0, past / Math.max(1, hero.offsetHeight * 0.7)));
-      overlay.style.opacity = Math.max(0, 1 - out * 1.3);
-      if (past > hero.offsetHeight * 0.6 && popupActive) stopPopups();
-    }
-    window.addEventListener('scroll', updateChaosOverlay, { passive: true });
-    updateChaosOverlay();
-
-    /* ============================================================
-       SCENE 2 — Radar + network nodes (visible during middle scroll)
-       Network nodes draw progressively as you scroll through middle.
-       ============================================================ */
-    const radarEl = $('#radar');
-    const netNodesEl = $('#netNodes');
-    function updateScene2() {
-      if (motionReduced) return;
-      const leistungen = $('#leistungen');
-      const kontakt = $('#kontakt');
-      if (!leistungen || !kontakt) return;
-      const lRect = leistungen.getBoundingClientRect();
-      const kRect = kontakt.getBoundingClientRect();
-      // visible while Leistungen is on/near the screen until Kontakt approaches
-      const isActive = (lRect.top < window.innerHeight * 0.7) && (kRect.top > window.innerHeight * 0.35);
-      if (radarEl)    radarEl.classList.toggle('active', isActive);
-      if (netNodesEl) netNodesEl.classList.toggle('active', isActive);
-
-      // progressive edge draw and node lighting (10 edges, 11 nodes incl. router)
-      const faq = $('#faq');
-      if (!faq || !netNodesEl) return;
-      const start = leistungen.offsetTop;
-      const end   = faq.offsetTop + faq.offsetHeight;
-      const y     = window.scrollY + window.innerHeight * 0.5;
-      const p     = Math.max(0, Math.min(1, (y - start) / Math.max(1, end - start)));
-      const edges = $$('#netNodes .edge');
-      const total = edges.length || 10;
-      const step  = Math.min(total, Math.floor(p * (total + 1)));
-      edges.forEach((e, i) => e.classList.toggle('drawn', i < step));
-      $$('#netNodes .node').forEach(n => {
-        const idx = parseInt(n.dataset.n, 10);
-        // router (0) lights up as soon as scene 2 is active; devices progressively
-        n.classList.toggle('lit', idx === 0 || idx <= step);
-      });
-    }
-    window.addEventListener('scroll', updateScene2, { passive: true });
-    updateScene2();
-
-    /* ============================================================
-       SCENE 3 — horizon, protective rings, wireframe shield
-       Activated when Kontakt enters viewport.
-       ============================================================ */
-    const horizonEl = $('#horizon');
-    const padlockRings = $('#padlockRings');
-    const shieldSvg = $('#shieldSvg');
-    let scene3Activated = false;
-    function activateScene3() {
-      if (scene3Activated) return;
-      scene3Activated = true;
-      if (horizonEl) horizonEl.classList.add('active');
-      if (padlockRings) padlockRings.classList.add('active');
-      if (shieldSvg) shieldSvg.classList.add('active');
-    }
-
-    /* ============================================================
-       WIREFRAME GLITCH SCHEDULER
-       Subtle flicker on a random wireframe.
-       Cadence depends on currentScene:
-         Scene 1: 1.5-3s   (chaos — more glitchy)
-         Scene 2: 5-10s    (calmer)
-         Scene 3: 12-22s   (almost never)
-       ============================================================ */
-    function glitchWireframe(w) {
-      if (!w || !w.material || w.userData.glitching) return;
-      w.userData.glitching = true;
-      const origX = w.position.x;
-      const origY = w.position.y;
-      const origOpacity = w.material.opacity;
-      const offX = (Math.random() - 0.5) * 1.4;
-      const offY = (Math.random() - 0.5) * 0.9;
-      // brief flicker + offset sequence (~220ms total)
-      const seq = [
-        { o: 0.06,        dx: offX,        dy: offY },
-        { o: origOpacity, dx: 0,           dy: 0 },
-        { o: 0.04,        dx: -offX * 0.5, dy: offY * 0.4 },
-        { o: origOpacity, dx: 0,           dy: 0 }
-      ];
-      let i = 0;
-      (function step() {
-        if (i >= seq.length) {
-          w.position.x = origX; w.position.y = origY;
-          w.material.opacity = origOpacity;
-          w.userData.glitching = false;
-          return;
-        }
-        const s = seq[i++];
-        w.material.opacity = s.o;
-        w.position.x = origX + s.dx;
-        w.position.y = origY + s.dy;
-        setTimeout(step, 55);
-      })();
-    }
-    function scheduleWireframeGlitch() {
-      let interval;
-      if (currentScene === 1)      interval = 1500 + Math.random() * 1500;
-      else if (currentScene === 2) interval = 5000 + Math.random() * 5000;
-      else                         interval = 12000 + Math.random() * 10000;
-      setTimeout(() => {
-        if (typeof wireframes !== 'undefined' && wireframes.length > 0 && !motionReduced && !document.hidden) {
-          const w = wireframes[Math.floor(Math.random() * wireframes.length)];
-          glitchWireframe(w);
-        }
-        scheduleWireframeGlitch();
-      }, interval);
-    }
-    if (!motionReduced) {
-      // start the scheduler — wireframes may not exist yet, the guard inside handles that
-      setTimeout(scheduleWireframeGlitch, 1500);
-    }
-    const scene3Observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) activateScene3(); });
-    }, { threshold: 0.18 });
-    const kontaktSection = $('#kontakt');
-    if (kontaktSection) scene3Observer.observe(kontaktSection);
 
   })();
   </script>
